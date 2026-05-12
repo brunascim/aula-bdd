@@ -54,4 +54,12 @@ FROM vendas
 WHERE data_venda = '2025-06-03'
 
 
+-- 1 quais produtos tem preço acima de 5?
+-- 2 quais produtos possuem a palavra ''Bolo'' no nome?
+-- 3 quais produtos tem menos de 20 unidades no estoque?
+
+
+
+
+
 
