@@ -1,9 +1,7 @@
 CREATE DATABASE 04102_Padaria_Bruna;
 USE 04102_Padaria_Bruna;
 SHOW DATABASES;
-SELECT * FROM produtos, vendas 
-
-drop database 04102_Padaria_Bruna;
+SELECT * FROM produtos, vendas; 
 
 CREATE TABLE produtos(
     id INT AUTO_INCREMENT PRIMARY KEY,

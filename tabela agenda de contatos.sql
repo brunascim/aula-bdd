@@ -43,9 +43,7 @@ VALUES
 ('14998887766', 'Comercial', 3);
 
 SELECT * FROM Grupos_Contato;
-
 SELECT * FROM Contatos;
-
 SELECT * FROM Telefones;
 
 
