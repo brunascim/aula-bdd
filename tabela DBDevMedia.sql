@@ -1,5 +1,15 @@
 CREATE DATABASE 04102_DBDevMedia_Bruna; 
 USE 04102_DBDevMedia_Bruna; 
+SHOW DATABASES;
+DROP DATABASE 04102_DBDevMedia_Bruna; 
+DROP DATABASE 04102_BibliotecaDigital_Bruna; 
+DROP DATABASE 04102_Dona_Vó_Bruna; 
+DROP DATABASE 04102_Lojavirtual_Bruna; 
+DROP DATABASE 04102_Papelaria_Bruna;
+DROP DATABASE 04102_agendadecontatos_Bruna; 
+DROP DATABASE 04102_avaliacoes_Bruna; 
+DROP DATABASE 04102_locadora_Bruna; 
+DROP DATABASE 04102_vendas_Bruna; 
 
 
 CREATE TABLE Alunos(
