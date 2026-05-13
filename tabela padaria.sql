@@ -122,14 +122,38 @@ INSERT INTO produtos (nome_produtos, preco, estoque, tipo) VALUES
 UPDATE produtos
 SET preco = 13.50,
     estoque = 15
-WHERE id = 29;
+WHERE id = 29; -- pudim
 
 DELETE FROM produtos
-WHERE id = 30;
+WHERE id = 30; -- esfiha
 
 SELECT COUNT(*) AS total_vendas 
 FROM produtos;
 
+UPDATE produtos -- bolo de fubá
+SET preco = 13.00
+WHERE id = 1;
+
+UPDATE produtos
+SET estoque = 8,
+	tipo = 'Bolo'
+WHERE id = 1;
+
+UPDATE produtos
+SET estoque = 10,
+	tipo = 'Bolo'
+WHERE id = 2;
+
+UPDATE produtos
+SET estoque = 12,
+	tipo = 'Bolo'
+WHERE id = 3;
+
+
+UPDATE produtos
+SET estoque = 7,
+	tipo = 'Bolo'
+WHERE id = 4;
 
 
 
