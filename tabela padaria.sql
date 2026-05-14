@@ -155,7 +155,106 @@ SET estoque = 7,
 	tipo = 'Bolo'
 WHERE id = 4;
 
+-- SELECT é usado para recuperar dados de uma tabela
+-- SINTAXE BÁSICA: SELECT coluna FROM tabela
+	-- 1.1 Selecionar todos os produtos e depois vendas.
+SELECT * FROM produtos;
+SELECT * FROM vendas;
 
+	-- 1.2 Selecionar apenas nome e valor dos produtos.
+SELECT nome_produtos, preco FROM produtos;
 
+	-- 1.3 Selecionar produtos com o tipo "Padaria"
+SELECT * FROM produtos 
+WHERE tipo = 'Padaria';
 
+	-- 1.4 Selecionar apenas nome e estoque dos produtos
+SELECT nome_produtos, estoque
+FROM produtos;
+
+-- DISTINCT remove duplicatas e retorna apenas valores únicos
+-- Útil para identificar categorias diferentes ou valores distintos
+-- SINTAXE BÁSICA: SELECT DISTINCT coluna FROM tabela
+	-- 2.1 Preços distintos dos produtos
+SELECT  DISTINCT preco FROM produtos;
+
+	-- 2.2 Combinação única de nome e estoque
+SELECT DISTINCT nome_produtos, estoque FROM produtos;
+
+	-- 2.3 id e produtos 
+SELECT DISTINCT id, nome_produtos FROM produtos;
+
+	-- 2.4 Tipos de produtos sem repetir
+SELECT DISTINCT tipo
+FROM produtos;
+
+-- WHERE filtra registros baseado em condições específicas
+-- Pode usar com operadores: =, <>, <, >, <=, >=, LIKE, IN, BETWEEN
+-- SINTAXE BÁSICA: SELECT coluna FROM tabela WHERE = 'Condicao'
+	-- 3.1 Todos os doces
+SELECT * FROM produtos 
+WHERE tipo = 'Doce';
+	-- 3.2 Todos os salgados
+SELECT * FROM produtos 
+WHERE tipo = 'Salgado';
+	-- 3.3 Todos os tipos "padaria"
+SELECT * FROM produtos 
+WHERE tipo = 'Padaria';
+	-- 3.4 Produtos entre 5 e 18 reais
+SELECT * FROM produtos 
+WHERE preco BETWEEN 5 AND 18;
+	-- 3.5 Produtos com estoque maior que 20
+SELECT * FROM produtos
+WHERE estoque > 20;
+
+-- LIMIT restringue o número de registro retornados
+-- Útil para paginação ou vizualização rápida
+-- SINTAXE BÁSICA: SELECT coluna FROM tabela LIMIT 1
+	-- 4.1 nome e preco dos primeiros 7 produtos
+SELECT nome_produtos, preco 
+FROM produtos 
+LIMIT 7;
+
+	-- 4.2 8 produtos com a maior quantidade de estoque
+SELECT nome_produtos, estoque
+FROM produtos 
+ORDER BY estoque DESC
+LIMIT 8;
+
+	-- 4.3 4 vendas mais caras
+SELECT nome_produtos, valor
+FROM vendas
+ORDER BY valor DESC
+LIMIT 4;
+
+	-- 4.4 3 produtos mais baratos
+SELECT nome_produtos, preco
+FROM produtos
+ORDER BY preco ASC
+LIMIT 3;
+
+	-- 4.5 Mostrar apenas as 2 primeiras vendas
+SELECT *
+FROM vendas
+LIMIT 2;
+
+-- AS dá nomes temporários a coluna ou tabelas
+-- SINTAXE BÁSICA: 
+-- Melhora a legibilidade dos resultados
+	-- 5.1 Renomear coluna nome_produtos para nome
+SELECT nome_produtos AS nome
+FROM produtos;
+
+	-- 5.2 Apelido para data_venda
+SELECT data_venda AS date
+FROM vendas;
+
+	-- 5.3 Apelido para cálculo
+SELECT SUM(estoque) AS unidades 
+FROM produtos
+WHERE nome_produtos = 'pão francês';
+
+	-- 5.4 Renomear coluna preco para valor_produto
+SELECT preco AS valor_produto
+FROM produtos;
 

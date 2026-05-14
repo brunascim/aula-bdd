@@ -278,3 +278,73 @@ VALUES
 (121, 1, 1, 1, 9, '2024-10-29'),
 (122, 3, 2, 2, 10, '2024-10-30'),
 (123, 5, 1, 3, 1, '2024-10-31');
+
+-- SELECT é usado para recuperar dados de uma tabela
+-- SINTAXE BÁSICA: SELECT coluna FROM tabela
+-- 1.1 Selecionar todos os clientes.
+SELECT * FROM clientes;
+
+-- 1.2 Selecionar apenas nome e email dos clientes.
+SELECT nome, email FROM clientes;
+
+-- 1.3 Selecionar produtos com o preço maior que 100
+SELECT * FROM produtos 
+WHERE preco > 100;
+
+-- DISTINCT remove duplicatas e retorna apenas valores únicos
+-- Útil para identificar categorias diferentes ou valores distintos
+-- SINTAXE BÁSICA: SELECT DISTINCT coluna FROM tabela
+-- 2.1 Cidades distintas onde os clientes moram
+SELECT  DISTINCT cidade FROM clientes;
+
+-- 2.2 Combinação única de cidade e gênero
+SELECT DISTINCT cidade, genero FROM clientes;
+
+-- 2.3 Cargos distintos dos funcionários
+SELECT DISTINCT cargo FROM funcionarios;
+
+-- WHERE filtra registros baseado em condições específicas
+-- Pode usar com operadores: =, <>, <, >, <=, >=, LIKE, IN, BETWEEN
+-- SINTAXE BÁSICA: SELECT coluna FROM tabela WHERE = 'Condicao'
+-- 3.1 Clientes do Rio de Janeiro
+SELECT * FROM clientes 
+WHERE cidade = 'Rio de Janeiro';
+-- 3.2 Produtos entre 50 e 100
+SELECT * FROM produtos 
+WHERE preco BETWEEN 50 AND 100;
+-- 3.3 Funcionários com salário maior que 3000
+SELECT * FROM funcionarios
+WHERE salario > 3000;
+
+-- LIMIT restringue o número de registro retornados
+-- Útil para paginação ou vizualização rápida
+-- SINTAXE BÁSICA: SELECT coluna FROM tabela LIMIT 1
+-- 4.1 Primeiros 5 clientes
+SELECT * FROM clientes LIMIT 5;
+
+-- 4.2 5 clientes mais jovens
+SELECT nome, data_nascimento 
+FROM clientes 
+ORDER BY data_nascimento DESC
+LIMIT 5;
+
+-- 4.3 3 produtos mais caros
+SELECT nome, preco
+FROM produtos
+ORDER BY preco DESC
+LIMIT 3;
+
+-- AS dá nomes temporários a coluna ou tabelas
+-- SINTAXE BÁSICA: 
+-- Melhora a legibilidade dos resultados
+-- 5.1 Renomear coluna salário para renda
+SELECT salario AS renda
+FROM funcionarios;
+
+-- 5.2 Apelido para tabela
+SELECT nome AS f_nome
+FROM funcionarios;
+
+-- 5.3 Apelido para cálculo
+SELECT salario * '12' AS salario_anual 
+FROM funcionarios;
