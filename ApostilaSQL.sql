@@ -281,54 +281,54 @@ VALUES
 
 -- SELECT é usado para recuperar dados de uma tabela
 -- SINTAXE BÁSICA: SELECT coluna FROM tabela
--- 1.1 Selecionar todos os clientes.
+	-- 1.1 Selecionar todos os clientes.
 SELECT * FROM clientes;
 
--- 1.2 Selecionar apenas nome e email dos clientes.
+	-- 1.2 Selecionar apenas nome e email dos clientes.
 SELECT nome, email FROM clientes;
 
--- 1.3 Selecionar produtos com o preço maior que 100
+	-- 1.3 Selecionar produtos com o preço maior que 100
 SELECT * FROM produtos 
 WHERE preco > 100;
 
 -- DISTINCT remove duplicatas e retorna apenas valores únicos
 -- Útil para identificar categorias diferentes ou valores distintos
 -- SINTAXE BÁSICA: SELECT DISTINCT coluna FROM tabela
--- 2.1 Cidades distintas onde os clientes moram
+	-- 2.1 Cidades distintas onde os clientes moram
 SELECT  DISTINCT cidade FROM clientes;
 
--- 2.2 Combinação única de cidade e gênero
+	-- 2.2 Combinação única de cidade e gênero
 SELECT DISTINCT cidade, genero FROM clientes;
 
--- 2.3 Cargos distintos dos funcionários
+	-- 2.3 Cargos distintos dos funcionários
 SELECT DISTINCT cargo FROM funcionarios;
 
 -- WHERE filtra registros baseado em condições específicas
 -- Pode usar com operadores: =, <>, <, >, <=, >=, LIKE, IN, BETWEEN
 -- SINTAXE BÁSICA: SELECT coluna FROM tabela WHERE = 'Condicao'
--- 3.1 Clientes do Rio de Janeiro
+	-- 3.1 Clientes do Rio de Janeiro
 SELECT * FROM clientes 
 WHERE cidade = 'Rio de Janeiro';
--- 3.2 Produtos entre 50 e 100
+	-- 3.2 Produtos entre 50 e 100
 SELECT * FROM produtos 
 WHERE preco BETWEEN 50 AND 100;
--- 3.3 Funcionários com salário maior que 3000
+	-- 3.3 Funcionários com salário maior que 3000
 SELECT * FROM funcionarios
 WHERE salario > 3000;
 
 -- LIMIT restringue o número de registro retornados
 -- Útil para paginação ou vizualização rápida
 -- SINTAXE BÁSICA: SELECT coluna FROM tabela LIMIT 1
--- 4.1 Primeiros 5 clientes
+	-- 4.1 Primeiros 5 clientes
 SELECT * FROM clientes LIMIT 5;
 
--- 4.2 5 clientes mais jovens
+	-- 4.2 5 clientes mais jovens
 SELECT nome, data_nascimento 
 FROM clientes 
 ORDER BY data_nascimento DESC
 LIMIT 5;
 
--- 4.3 3 produtos mais caros
+	-- 4.3 3 produtos mais caros
 SELECT nome, preco
 FROM produtos
 ORDER BY preco DESC
@@ -337,14 +337,188 @@ LIMIT 3;
 -- AS dá nomes temporários a coluna ou tabelas
 -- SINTAXE BÁSICA: 
 -- Melhora a legibilidade dos resultados
--- 5.1 Renomear coluna salário para renda
+	-- 5.1 Renomear coluna salário para renda
 SELECT salario AS renda
 FROM funcionarios;
 
--- 5.2 Apelido para tabela
+	-- 5.2 Apelido para tabela
 SELECT nome AS f_nome
 FROM funcionarios;
 
--- 5.3 Apelido para cálculo
+	-- 5.3 Apelido para cálculo
 SELECT salario * '12' AS salario_anual 
 FROM funcionarios;
+
+-- Operadores Booleanos (AND, OR, NOT)
+-- Combinam múltiplas condições na clausula WHERE
+	-- 6.1: AND - Clientes mulheres de São Paulo
+SELECT * FROM clientes
+WHERE cidade = 'São Paulo' AND genero = 'Feminino';
+
+	-- 6.2 AND - Funcionarios homens e solteiros
+SELECT * FROM funcionarios
+WHERE genero = 'Masculino' AND estado_civil = 'Solteiro';
+
+	-- 6.3 OR Clientes de São Paulo ou Rio de Janeiro
+SELECT * FROM clientes
+WHERE cidade = 'São Paulo' 
+OR cidade = 'Rio de Janeiro';
+
+	-- 6.4 OR Compras de calça jeans ou feijão carioca
+SELECT * FROM vendas
+WHERE id_produto = 8 
+OR id_produto = 9;
+
+	-- 6.5 NOT Produtos que não são da categoria Eletrônicos
+SELECT nome FROM categorias
+WHERE NOT nome = 'Eletrônicos';
+	--
+SELECT nome FROM categorias
+WHERE nome <> 'Eletrônicos';
+
+	-- 6.6 AND NOT Clientes mulheres que não moram no Rio
+SELECT * FROM clientes
+WHERE genero = 'Feminino' AND NOT cidade = 'Rio de Janeiro';
+
+	-- 6.7 Funcionarios que não tem dependentes
+SELECT * FROM funcionarios 
+WHERE NOT dependentes;
+	--
+SELECT * FROM funcionarios 
+WHERE dependentes = 0;
+
+	-- 6.8 Vendas de calça jeans de clientes que não moram no Rio de Janeiro
+SELECT * FROM vendas, produtos, clientes
+WHERE vendas.id_produto = produtos.id_produto
+AND vendas.id_cliente = clientes.id_cliente
+AND produtos.nome = 'Calça Jeans'
+AND clientes.cidade <> 'Rio de Janeiro';
+	-- 
+SELECT * FROM vendas
+WHERE id_produto = (SELECT id_produto FROM produtos WHERE nome = 'Calça Jeans')
+AND NOT id_cliente IN (SELECT id_cliente FROM clientes WHERE cidade = 'Rio de Janeiro');
+
+-- 7 Funções de Agregação
+-- AVG: média
+	-- 7.1 Média salarial dos funcionários
+SELECT AVG(salario)
+FROM funcionarios;
+
+	-- 7.2 Média de preço dos produtos
+SELECT AVG(preco)
+FROM produtos;
+
+-- SUM: soma
+	-- 7.3 Soma de todas as vendas
+SELECT SUM(quantidade)
+FROM vendas;
+
+	-- 7.4 Soma das rendas dos clientes
+SELECT SUM(renda)
+FROM clientes;
+
+-- MAX: máximo, MIN: mínimo
+	-- 7.5 Produto mais caro
+SELECT MAX(preco) 
+FROM produtos;
+
+	-- 7.6 Produto mais barato
+SELECT MIN(preco)
+FROM produtos;
+
+	-- 7.7 Maior salario
+SELECT MAX(salario)
+FROM funcionarios;
+
+	-- 7.8 Menor renda
+SELECT MIN(renda)
+FROM clientes;
+
+-- GROUP BY
+-- Agrupa dados
+	-- 8.1 quantidade de clientes por cidade
+SELECT cidade, COUNT(*)
+FROM clientes
+GROUP BY cidade;
+	-- 8.2 Média salarial por cargo
+SELECT cargo, ROUND(AVG(salario),2) AS Média_Salarial
+FROM funcionarios
+GROUP BY cargo;
+	-- 8.3 total vendido por produto
+SELECT id_produto, SUM(quantidade)
+FROM vendas
+GROUP BY id_produto;
+
+	-- 8.4 quantidade de clientes por genero
+SELECT genero, COUNT(*) AS quantidade 
+FROM clientes
+GROUP BY genero;
+
+	-- 8.5 quantidade de funcionarios por estado civil
+SELECT estado_civil, COUNT(*) AS estado_civil
+FROM funcionarios
+GROUP BY estado_civil;
+
+-- HAVING
+-- Filtra grupos criados pelo GROUP BY
+	-- 9.1 Cidades com mais de 5 clientes
+SELECT cidade, COUNT(*)
+FROM clientes
+GROUP BY cidade
+HAVING COUNT(*) > 5;
+
+	-- 9.2 Cargos com média salarial maior que 4000
+SELECT cargo, ROUND(AVG(salario),2) AS media_salarial
+FROM funcionarios 
+GROUP BY cargo
+HAVING ROUND(AVG(salario),2) > 4000;
+
+	-- 9.3 Produtos com total vendido maior que 10
+SELECT id_produto, SUM(quantidade) AS total_vendido
+FROM vendas
+GROUP BY id_produto
+HAVING SUM(quantidade) > 10;
+
+-- BETWEEN
+-- Procura valores ENTRE dois valores
+	-- 10.1 Produtos com preco entre 50 e 100
+SELECT * FROM produtos
+WHERE preco BETWEEN 50 AND 100;
+
+	-- 10.2 Clientes com renda entre 3000 e 5000
+SELECT * FROM clientes
+WHERE renda BETWEEN 3000 AND 5000;
+
+	-- 10.3 Vendas feitas em julho de 2024
+SELECT * FROM vendas
+WHERE data BETWEEN '2024-07-01' AND '2024-07-31';
+
+-- LIKE
+-- Procura palavras ou letras
+	-- 11.1 Clientes que começam com João
+SELECT * FROM clientes
+WHERE nome LIKE 'João%';
+
+	-- 11.2 Produtos que possuem a palavra jeans
+SELECT * FROM produtos
+WHERE nome LIKE '%jeans%';
+
+	-- 11.3 Emails que terminam com gmail.com
+SELECT * FROM clientes
+WHERE email LIKE '%gmail.com';
+
+-- ORDER BY
+-- Ordenar resultados, ASC = crescente, DESC = decrescente
+	-- 12.1 Clientes em ordem alfabetica
+SELECT * FROM clientes
+ORDER BY nome ASC;
+
+	-- 12.2 Produtos do mais caro para o mais barato
+SELECT * FROM produtos
+ORDER BY preco DESC;
+
+	-- 12.3 Funcionários ordenados por cargo
+SELECT nome, cargo FROM funcionarios
+ORDER BY cargo ASC;
+
+
