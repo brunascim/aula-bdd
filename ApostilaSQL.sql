@@ -483,15 +483,18 @@ HAVING SUM(quantidade) > 10;
 -- Procura valores ENTRE dois valores
 	-- 10.1 Produtos com preco entre 50 e 100
 SELECT * FROM produtos
-WHERE preco BETWEEN 50 AND 100;
+WHERE preco 
+BETWEEN 50 AND 100;
 
 	-- 10.2 Clientes com renda entre 3000 e 5000
 SELECT * FROM clientes
-WHERE renda BETWEEN 3000 AND 5000;
+WHERE renda
+BETWEEN 3000 AND 5000;
 
 	-- 10.3 Vendas feitas em julho de 2024
 SELECT * FROM vendas
-WHERE data BETWEEN '2024-07-01' AND '2024-07-31';
+WHERE data 
+BETWEEN '2024-07-01' AND '2024-07-31';
 
 -- LIKE
 -- Procura palavras ou letras
@@ -521,4 +524,236 @@ ORDER BY preco DESC;
 SELECT nome, cargo FROM funcionarios
 ORDER BY cargo ASC;
 
+-- UNION
+-- Combina resultados de duas ou mais consultas SELECT
+-- As consultas devem ter o mesmo número de colunas e tipos compatíveis
+-- 13.1. Todos os nomes (clientes e funcionários) em ordem alfabética
+SELECT nome, 'Cliente' AS TIPO
+FROM clientes
+UNION
+SELECT nome, 'Funcionario' AS funcionario
+FROM funcionarios;
 
+-- 13.2. Cidades de clientes e fornecedores
+SELECT cidade, 'Cliente' AS TIPO
+FROM clientes
+UNION
+SELECT cidade, 'Fornecedores' AS TIPO
+FROM fornecedores;
+
+-- 13.3. Produtos baratos e caros
+SELECT nome, preco, 'Barato' AS Categoria
+FROM produtos
+WHERE preco < 50
+UNION
+SELECT nome, preco, 'Caro' AS Categoria
+FROM produtos
+WHERE preco > 50;
+
+-- NULL E NOT NULL
+-- Verifica se valores são nulos ou não nulos
+-- Observação: No seu banco, todas colunas são NOT NULL
+-- 14.1: Clientes com email nulo
+SELECT * FROM clientes
+WHERE email IS NULL;
+-- 14.2: Clientes com email preenchido
+SELECT * FROM clientes 
+WHERE email IS NOT NULL;
+ 
+-- -- TRIM - Remoção de espaços
+-- Remove espaços em branco no início e fim de strings
+-- Útil para limpar dados importados
+-- 15.1 Remover espaços do nome
+SELECT TRIM(nome)
+FROM clientes;
+-- 15.2 Remover espaços do endereço
+SELECT TRIM(endereco)
+FROM clientes;
+-- 15.3. Nomes sem espaços extras
+SELECT nome, TRIM(nome) AS nome_limpo
+FROM clientes;
+-- 15.4. Endereços formatados
+SELECT endereco, TRIM(endereco) AS endereco_limpo
+FROM clientes;
+-- 15.5. Emails limpos
+ SELECT email, TRIM(email) AS email_limpo
+FROM clientes;
+ 
+-- 15. REPLACE
+-- Troca um texto por outro
+-- SINTAXE BÁSICA:
+-- SELECT REPLACE(coluna, 'texto_antigo', 'texto_novo')
+-- FROM tabela;
+-- 15.1: Substituindo gêneros por siglas
+SELECT nome, REPLACE(REPLACE(genero, 'Masculino', 'M'), 'Feminino', 'F') AS genero
+FROM clientes;
+
+-- 15.2: Formatando telefones
+SELECT nome, REPLACE(telefone, '-', ' ') AS telefone_novo
+FROM clientes;
+
+-- 15.3: Substituir 'Av.' por 'Avenida' nos endereços
+SELECT endereco, REPLACE(endereco, 'Av.', 'Avenida') AS endereco_atualizado
+FROM clientes;
+
+-- 15.4: Substituir domínio de email
+ SELECT email, REPLACE(email, 'email.com','gmail.com') AS dominio_atualizado
+ FROM clientes;
+ 
+-- LPAD
+-- 16.1 IDs formatados com zeros
+SELECT LPAD(id_cliente, 5, '0') AS id_formatado
+FROM clientes;
+
+-- 16.2 Códigos de produto
+SELECT LPAD(id_produto, 5, 'cdg') AS cdg_produto
+FROM produtos;
+
+-- 16.3 Formatar telefones
+SELECT LPAD(telefone, 18, '+55') AS telefone_atualizado
+FROM clientes;
+ 
+-- SUBSTRING - Extrair parte do texto
+-- Extrai uma parte de uma string baseada em posição e tamanho
+-- 17.1. Iniciais dos clientes
+SELECT SUBSTRING(nome, 1, 2) AS inicial
+FROM clientes;
+
+-- 17.2 Mês de nascimento dos funcionários
+SELECT nome, SUBSTRING(data_nascimento, 6, 2) AS mes_nascimento
+FROM clientes;
+
+-- 17.3. Domínio de emails
+SELECT email, SUBSTRING(email, POSITION('@' IN email) +1) AS dominio
+FROM clientes;
+ 
+-- 18. UPPER/LOWER
+-- 18.1. Nomes em maiúsculo
+SELECT UPPER(nome) AS nome_maiusculo
+FROM clientes;
+ 
+SELECT LOWER(nome) AS nome_minusculo
+FROM clientes;
+-- 18.2. Cargos em maiúsculo
+SELECT UPPER(cargo) AS cargo_maiusculo
+FROM funcionarios;
+
+SELECT LOWER(cargo) AS cargo_minusculo
+FROM funcionarios;
+
+-- 18.3. Categorias em maiúsculo
+ SELECT UPPER(nome) AS categoria_maiusculo
+FROM categorias;
+
+SELECT LOWER(nome) AS categoria_minusculo
+FROM categorias;
+ 
+-- 19. LENGTH
+-- 19.1. Tamanho dos nomes dos produtos
+SELECT nome, LENGTH(nome) AS tamanho_nome
+FROM produtos;
+-- 19.2. Endereços mais longos
+SELECT endereco, LENGTH(endereco) AS endereco_longo
+FROM clientes
+ORDER BY endereco_longo DESC;
+
+-- 19.3. Média de tamanho de emails
+ SELECT AVG(LENGTH(email))AS media_email 
+ FROM clientes;
+
+-- 20. CAST
+-- 20.1. Preços como inteiros
+SELECT nome, CAST(preco AS SIGNED) AS preco_int
+FROM produtos;
+
+-- 20.2. Datas como strings
+SELECT data, CAST(data AS CHAR) AS data_texto
+FROM vendas;
+
+-- 20.3. Convertendo string para data
+ SELECT CAST('2026-05-15' AS DATE) AS data_convertida
+ FROM vendas;
+ 
+-- 21. CONCAT
+-- 21.1. Nome completo com cidade
+SELECT CONCAT(nome, ' - ', cidade) AS cliente_cidade
+FROM clientes;
+
+-- 21.2. Descrição de produtos
+SELECT CONCAT(nome, ' - Custa R$ ', preco) AS nome_preco
+FROM produtos;
+
+-- 21.3. Endereço completo
+ SELECT CONCAT(endereco, ' - ', cidade) AS endereco_completo
+ FROM clientes;
+ 
+-- 22. CASE WHEN
+-- 22.1. Faixa etária dos clientes
+SELECT nome, data_nascimento,
+	CASE
+		WHEN TIMESTAMPDIFF(YEAR, data_nascimento, CURDATE()) < 18 THEN 'Jovem'
+        WHEN TIMESTAMPDIFF(YEAR, data_nascimento, CURDATE()) BETWEEN 18 AND 40 THEN 'Adulto'
+        ELSE 'Adulto +'
+	END AS faixa_etaria
+FROM clientes;
+-- 22.2. Classificação de produtos
+SELECT nome, preco,
+    CASE
+        WHEN preco < 50 THEN 'Barato'
+        WHEN preco BETWEEN 50 AND 100 THEN 'Médio'
+        ELSE 'Caro'
+    END AS classificacao
+FROM produtos;
+
+-- 22.3. Status de clientes
+ SELECT nome, renda,
+    CASE
+        WHEN renda < 2000 THEN 'Baixa renda'
+        WHEN renda BETWEEN 2000 AND 5000 THEN 'Média renda'
+        ELSE 'Alta renda'
+    END AS status_cliente
+FROM clientes;
+ 
+-- 23. VIEWS
+-- 23.1. View de clientes premium
+CREATE VIEW clientes_premium AS
+SELECT nome, renda
+FROM clientes
+WHERE renda > 5000;
+ 
+SELECT *
+FROM clientes_premium;
+
+-- 23.2. View de produtos por categoria
+CREATE VIEW produtos_categoria AS
+SELECT nome, preco,
+    CASE
+        WHEN preco < 50 THEN 'Barato'
+        WHEN preco BETWEEN 50 AND 100 THEN 'Médio'
+        ELSE 'Caro'
+    END AS categoria
+FROM produtos;
+
+SELECT *
+FROM produtos_categoria;
+
+-- 23.3. View de desempenho de vendas
+CREATE VIEW desempenho_vendas AS
+SELECT vendas.id_venda, produtos.nome 
+AS produto, vendas.quantidade, produtos.preco,
+    (vendas.quantidade * produtos.preco) 
+AS total_venda
+FROM vendas, produtos
+WHERE vendas.id_produto = produtos.id_produto;
+
+SELECT *
+FROM desempenho_vendas;
+
+-- 
+
+ CREATE VIEW desempenho_vendas1 AS
+SELECT id_produto, quantidade
+FROM vendas;
+
+SELECT *
+FROM desempenho_vendas1;

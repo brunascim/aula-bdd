@@ -328,13 +328,16 @@ SELECT * FROM clientes;
 -- DISTINCT
 -- Remove valores repetidos
 -- 2.1 Mostrar cidades sem repetir
-SELECT DISTINCT cidade FROM clientes;
+SELECT DISTINCT cidade 
+FROM clientes;
 
 -- 2.2 Mostrar tipos de produtos sem repetir
-SELECT DISTINCT tipo FROM produtos;
+SELECT DISTINCT tipo 
+FROM produtos;
 
 -- 2.3 Mostrar cargos diferentes dos funcionários
-SELECT DISTINCT cargo FROM funcionarios;
+SELECT DISTINCT cargo 
+FROM funcionarios;
 
 -- WHERE
 -- Filtra informações
@@ -572,7 +575,7 @@ GROUP BY id_produto
 HAVING SUM(quantidade) > 3;
 
 -- 18.3 Cargos com média salarial maior que 3000
-SELECT cargo, AVG(salario) AS media_salarial
+SELECT cargo, ROUND(AVG(salario),2) AS media_salarial
 FROM funcionarios
 GROUP BY cargo
 HAVING AVG(salario) > 3000;
