@@ -440,10 +440,12 @@ FROM clientes;
 SELECT cidade, COUNT(*)
 FROM clientes
 GROUP BY cidade;
+
 	-- 8.2 Média salarial por cargo
 SELECT cargo, ROUND(AVG(salario),2) AS Média_Salarial
 FROM funcionarios
 GROUP BY cargo;
+
 	-- 8.3 total vendido por produto
 SELECT id_produto, SUM(quantidade)
 FROM vendas
@@ -652,6 +654,7 @@ FROM categorias;
 -- 19.1. Tamanho dos nomes dos produtos
 SELECT nome, LENGTH(nome) AS tamanho_nome
 FROM produtos;
+
 -- 19.2. Endereços mais longos
 SELECT endereco, LENGTH(endereco) AS endereco_longo
 FROM clientes
