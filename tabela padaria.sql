@@ -1020,412 +1020,435 @@ GROUP BY cargo;
 -- =========================================
 -- HAVING
 -- 12.1 Tipos de produtos com média acima de 15
+SELECT ROUND(AVG(preco),2) AS media_produtos
+FROM produtos
+GROUP BY tipo
+HAVING ROUND(AVG(preco),2) > 15;
+
 -- 12.2 Cidades com mais de 5 clientes
+SELECT cidade, COUNT(*) AS clientes
+FROM clientes
+GROUP BY cidade 
+HAVING COUNT(*) > 5;
+
 -- 12.3 Cargos com soma salarial acima de 10000
-
- 
-
- 
+SELECT cargo, SUM(salario) AS soma_salarial
+FROM funcionarios
+GROUP BY cargo
+HAVING soma_salarial > 10000;
 
 -- =========================================
 -- UNION
--- 13.1 Clientes e funcionários
--- em uma única lista
--- 13.2 Produtos baratos
--- e produtos com estoque baixo
--- 13.3 Cidades de clientes
--- e funcionários
+-- 13.1 Clientes e funcionários em uma única lista
+SELECT nome FROM clientes
+UNION
+SELECT nome FROM funcionarios;
 
- 
+-- 13.2 Produtos baratos e produtos com estoque baixo
+SELECT nome, preco, 'Barato' AS categoria  
+FROM produtos
+WHERE preco < 50
+UNION
+SELECT nome, estoque, 'Baixo estoque' AS categoria
+from produtos
+WHERE estoque < 10;
 
- 
-
- 
+-- 13.3 Cidades de clientes e funcionários
+-- 19.3 Salario e renda de clientes e funcionários
+SELECT nome, renda FROM clientes
+UNION
+SELECT nome, salario FROM funcionarios;
 
 -- =========================================
 -- BETWEEN
 -- 14.1 Produtos entre 10 e 20 reais
--- 14.2 Clientes com renda
--- entre 3000 e 5000
+SELECT * FROM produtos 
+WHERE preco BETWEEN 10 AND 20;
+
+-- 14.2 Clientes com renda entre 3000 e 5000
+SELECT * FROM clientes
+WHERE renda BETWEEN 3000 AND 5000;
+
 -- 14.3 Vendas entre julho e agosto
-
- 
-
- 
-
- 
+SELECT * FROM vendas
+WHERE data_venda BETWEEN '2025-07-01' AND '2025-08-31';
 
 -- =========================================
 -- LIKE
 -- 15.1 Produtos que começam com Pão
+SELECT * FROM produtos 
+WHERE nome LIKE 'Pão%';
+
 -- 15.2 Clientes que terminam com Silva
--- 15.3 Funcionários que possuem
--- a letra A no nome
+SELECT * FROM clientes
+WHERE nome LIKE '%Silva';
 
- 
-
- 
+-- 15.3 Funcionários que possuem a letra A no nome
+SELECT nome FROM clientes
+WHERE nome LIKE '%A%';
 
 -- =========================================
 -- NULL / NOT NULL
--- 16.1 Clientes com email preenchido
+-- 16.1 Clientes com telefone preenchido
+SELECT * FROM clientes
+WHERE telefone IS NOT NULL;
+
 -- 16.2 Produtos com estoque preenchido
+SELECT * FROM produtos
+WHERE estoque IS NOT NULL;
+
 -- 16.3 Funcionários com cargo preenchido
-
- 
-
- 
-
- 
+SELECT * FROM funcionarios
+WHERE cargo IS NOT NULL;
 
 -- =========================================
 -- ORDER BY
--- 17.1 Produtos do mais caro
--- para o mais barato
+-- 17.1 Produtos do mais caro para o mais barato
+SELECT * FROM produtos
+ORDER BY preco DESC;
+
 -- 17.2 Clientes por nome
+SELECT * FROM clientes
+ORDER BY nome ASC;
+
 -- 17.3 Funcionários por salário
-
- 
-
- 
-
- 
+SELECT * FROM funcionarios
+ORDER BY salario DESC;
 
 -- =========================================
 -- TRIM
 -- 18.1 Remover espaços dos clientes
+SELECT TRIM(nome) AS nome_limpo
+FROM clientes;
+
 -- 18.2 Remover espaços dos produtos
+SELECT TRIM(nome) AS produto_limpo
+FROM produtos;
+
 -- 18.3 Remover espaços dos cargos
-
- 
-
- 
-
+SELECT TRIM(cargo) AS cargo_limpo
+FROM funcionarios;
 -- =========================================
 -- REPLACE
--- 19.1 Trocar "Pão"
--- por "Padaria"
--- 19.2 Trocar "Chocolate"
--- por "Choco"
--- 19.3 Trocar "Gerente"
--- por "Supervisor"
+-- 19.1 Trocar "Pão" por "Padaria"
+SELECT nome, REPLACE(nome, 'Pão', 'Padaria') AS nome_novo
+FROM produtos;
 
- 
+-- 19.2 Trocar "Chocolate" por "Choco"
+SELECT nome, REPLACE(nome, 'Chocolate','Choco') AS nome_novo
+FROM produtos;
 
- 
-
+-- 19.3 Trocar "Gerente" por "Supervisor"
+SELECT nome, REPLACE(cargo, 'Gerente', 'Supervisor') AS nome_novo
+FROM funcionarios;
 -- =========================================
 -- SUBSTRING
--- 20.1 Primeiras 4 letras
--- dos clientes
--- 20.2 Últimos 5 caracteres
--- dos produtos
+-- 20.1 Primeiras 4 letras dos clientes
+SELECT SUBSTRING(nome, 1, 4) AS 4_letras
+FROM clientes;
+
+-- 20.2 Últimos 5 caracteres dos produtos
+SELECT SUBSTRING(nome, -5) AS ultimos_5
+FROM clientes;
+
 -- 20.3 Mostrar mês das vendas
+SELECT SUBSTRING(data_venda, 6, 2) AS mes_vendas
+FROM vendas;
 
- 
-
- 
 
 -- =========================================
 -- UPPER
 -- 21.1 Produtos em maiúsculo
+SELECT UPPER(nome) AS produtos_maiusculos
+FROM produtos;
+
+SELECT LOWER(nome) AS produtos_minusculos
+FROM produtos;
+
 -- 21.2 Clientes em maiúsculo
--- 21.3 Funcionários e cargos
--- em maiúsculo
+SELECT UPPER(nome) AS nomes_maiusculos
+FROM clientes;
 
- 
+SELECT LOWER(nome) AS nomes_minusculos
+FROM clientes;
 
- 
-
- 
+-- 21.3 Funcionários e cargos em maiúsculo
+SELECT UPPER(nome), UPPER(cargo) 
+FROM funcionarios;
 
 -- =========================================
 -- LENGTH
 
- 
-
 -- 22.1 Produtos com nomes longos
--- 22.2 Clientes com nome
--- acima de 10 letras
+SELECT nome, LENGTH(nome) AS nome_longo
+FROM produtos
+ORDER BY nome_longo DESC;
+
+-- 22.2 Clientes com nome acima de 10 letras
+SELECT nome, LENGTH(nome) AS nome_longo
+FROM clientes
+WHERE LENGTH(nome) > 10;
+
 -- 22.3 Mostrar tamanho dos cargos
-
- 
-
- 
+SELECT cargo, LENGTH(cargo) AS tamanho_cargo
+FROM funcionarios;
 
 -- =========================================
 -- CAST
 -- 23.1 Converter preço para inteiro
+SELECT nome, CAST(preco AS SIGNED) AS preco_int
+FROM produtos;
+
 -- 23.2 Converter salário para inteiro
--- 23.3 Converter data da venda
--- para texto
+SELECT nome, CAST(salario AS SIGNED) AS salario_int
+FROM funcionarios;
 
- 
-
- 
+-- 23.3 Converter data da venda para texto
+SELECT data_venda, CAST(data_venda AS CHAR) AS data_texto
+FROM vendas;
 
 -- =========================================
 -- CONCAT
 -- 24.1 Produto e preço
+SELECT CONCAT(nome, ' - Custa R$ ', preco) AS nome_preco
+FROM produtos;
+
 -- 24.2 Cliente e cidade
+SELECT CONCAT(nome, ' - ', cidade) AS cliente_cidade
+FROM clientes;
+
 -- 24.3 Funcionário e cargo
-
- 
-
- 
-
- 
+SELECT CONCAT(nome, ' - ', cargo) AS funcionario_cargo
+FROM funcionarios;
 
 -- =========================================
 -- CASE WHEN
 -- 25.1 Classificar produtos
+SELECT nome, preco,
+	CASE 
+		WHEN preco < 50 THEN 'Barato'
+        WHEN preco BETWEEN 50 AND 100 THEN 'Médio'
+        ELSE 'Caro'
+    END AS classificacao
+FROM produtos;
+
 -- 25.2 Classificar clientes
+SELECT nome, renda,
+    CASE
+        WHEN renda < 2000 THEN 'Baixa renda'
+        WHEN renda BETWEEN 2000 AND 5000 THEN 'Média renda'
+        ELSE 'Alta renda'
+    END AS classificacao
+FROM clientes;
+
 -- 25.3 Classificar funcionários
-
- 
-
- 
-
- 
-
+SELECT nome, salario,
+    CASE
+        WHEN salario < 2000 THEN 'Salário baixo'
+        WHEN salario BETWEEN 2000 AND 3000 THEN 'Salário médio'
+        ELSE 'Salário alto'
+    END AS classificacao
+FROM funcionarios;
 -- =========================================
 -- VIEWS
 -- 26.1 View de produtos caros
+CREATE VIEW produtos_caros AS
+SELECT nome, preco 
+FROM produtos
+WHERE preco > 10
+ORDER BY preco DESC;
 -- Mostrar view
-
- 
-
- 
-
- 
+SELECT * FROM produtos_caros;
 
 -- 26.2 View de clientes premium
+CREATE VIEW clientes_premium AS
+SELECT nome, renda, cidade
+FROM clientes
+WHERE renda > 5000;
 -- Mostrar view
-
- 
-
- 
-
- 
+SELECT * FROM clientes_premium;
 
 -- 26.3 View completa de vendas
+CREATE VIEW vendas_completas AS
+SELECT id_venda, quantidade, valor, data_venda
+FROM vendas;
 -- Mostrar view
+SELECT * FROM vendas_completas;
 
- 
-
- 
-
-========================================= NIVEL HARD =========================================
-
- 
-
- 
+-- ========================================= NIVEL HARD =========================================
 
 -- =========================================
 -- SELECT
+-- 1.1 Mostrar os produtos que possuem preço maior que a média geral
+SELECT nome, preco 
+FROM produtos
+WHERE preco > (
+	SELECT ROUND(AVG(preco),2)
+    FROM produtos
+ );
 
- 
+-- 1.2 Mostrar vendas com valor maior que a maior venda do dia 2025-06-03
+SELECT * FROM vendas
+WHERE valor > (
+	SELECT MAX(valor)
+    FROM vendas
+    WHERE data_venda = '2025-06-03'
+    );
 
--- 1.1 Mostrar os produtos que possuem
--- preço maior que a média geral
+-- 1.3 Mostrar produtos que possuem estoque menor que o estoque médio dos produtos do mesmo tipo
+SELECT * FROM produtos p1
+WHERE estoque < (
+    SELECT AVG(estoque)
+    FROM produtos p2
+    WHERE p1.tipo = p2.tipo
+);
 
- 
-
--- 1.2 Mostrar vendas com valor maior
--- que a maior venda do dia 2025-06-03
-
- 
-
--- 1.3 Mostrar produtos que possuem
--- estoque menor que o estoque médio
--- dos produtos do mesmo tipo
-
- 
-
- 
 
 -- =========================================
 -- DISTINCT
+-- 2.1 Mostrar datas diferentes onde houve vendas acima de 40 reais
+SELECT DISTINCT data_venda 
+FROM vendas 
+WHERE valor > 40;
 
- 
+-- 2.2 Mostrar tipos diferentes de produtos com estoque acima de 20
+SELECT DISTINCT tipo 
+FROM produtos
+WHERE estoque > 20;
 
--- 2.1 Mostrar datas diferentes
--- onde houve vendas acima de 40 reais
-
- 
-
--- 2.2 Mostrar tipos diferentes
--- de produtos com estoque acima de 20
-
- 
-
--- 2.3 Mostrar valores diferentes
--- de vendas maiores que 30
-
- 
-
- 
+-- 2.3 Mostrar valores diferentes de vendas maiores que 30
+SELECT DISTINCT valor
+FROM vendas
+WHERE valor > 30;
 
 -- =========================================
 -- WHERE
+-- 3.1 Mostrar produtos do tipo Doce com estoque menor que 30
+SELECT * FROM produtos 
+WHERE tipo = 'Doce'
+AND estoque > 30;
 
- 
+-- 3.2 Mostrar vendas feitas após o dia 2025-06-03 com valor acima de 50
+SELECT * FROM vendas
+WHERE data_venda > '2025-06-03'
+AND valor > 50;
 
--- 3.1 Mostrar produtos do tipo Doce
--- com estoque menor que 30
 
- 
+-- 3.3 Mostrar produtos que não são do tipo Padaria e custam mais de 15 reais
+SELECT * FROM produtos
+WHERE NOT tipo = 'Padaria' 
+AND preco > 15;
 
--- 3.2 Mostrar vendas feitas após
--- o dia 2025-06-03 com valor acima de 50
-
- 
-
--- 3.3 Mostrar produtos que não são
--- do tipo Padaria e custam mais de 15 reais
-
- 
-
- 
 
 -- =========================================
 -- LIMIT
+-- 4.1 Mostrar os 4 produtos com maior estoque
+SELECT * FROM produtos
+ORDER BY estoque DESC
+LIMIT 4;
 
- 
+-- 4.2 Mostrar as 3 vendas com menor valor
+SELECT * FROM vendas
+ORDER BY valor ASC
+LIMIT 3;
 
--- 4.1 Mostrar os 4 produtos
--- com maior estoque
-
- 
-
--- 4.2 Mostrar as 3 vendas
--- com menor valor
-
- 
-
--- 4.3 Mostrar os 5 produtos
--- mais baratos do tipo Padaria
-
- 
-
- 
+-- 4.3 Mostrar os 5 produtos mais baratos do tipo Padaria
+SELECT * FROM produtos
+WHERE tipo = 'Padaria'
+ORDER BY preco ASC
+LIMIT 3;
 
 -- =========================================
 -- AS
+-- 5.1 Mostrar o dobro do estoque com apelido estoque_dobrado
+SELECT nome, estoque * 2 AS estoque_dobrado
+FROM produtos;
 
- 
+-- 5.2 Mostrar valor total possível do estoque de cada produto
+SELECT nome, preco, estoque, 
+		preco * estoque AS valor_total_estoque
+FROM produtos;
 
--- 5.1 Mostrar o dobro do estoque
--- com apelido estoque_dobrado
-
- 
-
--- 5.2 Mostrar valor total possível
--- do estoque de cada produto
-
- 
-
--- 5.3 Mostrar quantidade vendida
--- com apelido total_itens
-
- 
-
- 
+-- 5.3 Mostrar quantidade vendida com apelido total_itens
+SELECT SUM(quantidade) AS total_itens
+FROM vendas;
 
 -- =========================================
 -- AND / OR / NOT
+-- 6.1 Mostrar produtos do tipo Bolo ou Doce com preço acima de 15
+SELECT nome, preco, estoque FROM produtos
+WHERE (tipo = 'Bolo'
+OR tipo = 'Doce')
+AND preco > 15;
 
- 
+-- 6.2 Mostrar produtos que não são Bolo e possuem estoque acima de 20
+SELECT nome, tipo, estoque FROM produtos
+WHERE NOT tipo = 'Bolo'
+AND estoque > 20; 
 
--- 6.1 Mostrar produtos do tipo Bolo
--- ou Doce com preço acima de 15
-
- 
-
--- 6.2 Mostrar produtos que não são
--- Bolo e possuem estoque acima de 20
-
- 
-
--- 6.3 Mostrar vendas com quantidade
--- maior que 2 ou valor acima de 50
-
- 
-
- 
+-- 6.3 Mostrar vendas com quantidade maior que 2 ou valor acima de 50
+SELECT * FROM vendas
+WHERE (quantidade > 2 
+OR valor > 50); 
 
 -- =========================================
 -- AVG
-
- 
-
 -- 7.1 Média de preço por tipo
+SELECT tipo, ROUND(AVG(preco),2) AS media_tipo
+FROM produtos
+GROUP BY tipo;
 
- 
-
--- 7.2 Média de quantidade vendida
--- por produto
-
- 
+-- 7.2 Média de quantidade vendida por produto
+SELECT id_produto,
+       ROUND(AVG(quantidade), 2) AS media_qt
+FROM vendas
+GROUP BY id_produto;
 
 -- 7.3 Média de valor vendido por data
-
- 
-
- 
+SELECT data_venda, ROUND(AVG(valor),2) AS media_valor
+FROM vendas
+GROUP BY data_venda;
 
 -- =========================================
 -- SUM
-
- 
-
 -- 8.1 Soma do estoque por tipo
+SELECT tipo, SUM(estoque) AS estoque_total
+FROM produtos
+GROUP BY tipo;
 
- 
+-- 8.2 Soma do valor vendido por produto
+SELECT id_produto, SUM(valor) AS valor_vendido
+FROM vendas
+GROUP BY id_produto;
 
--- 8.2 Soma do valor vendido
--- por produto
-
- 
-
--- 8.3 Soma das quantidades vendidas
--- por data
-
- 
-
- 
+-- 8.3 Soma das quantidades vendidas por data
+SELECT data_venda, SUM(quantidade) AS qt_vendidas
+FROM vendas
+GROUP BY data_venda;
 
 -- =========================================
 -- MAX / MIN
+-- 9.1 Produto mais caro de cada tipo
+SELECT tipo, MAX(preco) AS produto_mais_caro
+FROM produtos
+GROUP BY tipo;
 
- 
+-- 9.2 Menor estoque de cada tipo
+SELECT tipo, MIN(estoque) AS menor_estoque
+FROM produtos
+GROUP BY tipo;
 
--- 9.1 Produto mais caro
--- de cada tipo
-
- 
-
--- 9.2 Menor estoque
--- de cada tipo
-
- 
-
--- 9.3 Maior valor de venda
--- por data
-
- 
-
- 
+-- 9.3 Maior valor de venda por data
+SELECT data_venda, MAX(valor) AS maior_venda
+FROM vendas
+GROUP BY data_venda;
 
 -- =========================================
 -- COUNT
-
- 
-
--- 10.1 Quantidade de produtos
--- por tipo
-
- 
+-- 10.1 Quantidade de produtos por tipo
+SELECT COUNT(quantidade)
+FROM produtos
+GROUP BY 
 
 -- 10.2 Quantidade de vendas
 -- por produto
