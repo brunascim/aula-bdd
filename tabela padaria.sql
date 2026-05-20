@@ -1493,282 +1493,221 @@ GROUP BY id_produto
 HAVING SUM(valor) > 50;
 
 -- 12.3 Datas com mais de 2 vendas
-SELECT data_venda, quantidade
-
- 
+SELECT data_venda, COUNT(*) AS qt_vendas
+FROM vendas 
+GROUP BY data_venda
+HAVING COUNT(*) > 2;
 
 -- =========================================
 -- UNION
+-- 13.1 Produtos do tipo Bolo e produtos do tipo Doce
+SELECT * FROM produtos
+WHERE tipo = 'Bolo'
+UNION
+SELECT * FROM produtos 
+WHERE tipo = 'Doce';
 
- 
+-- 13.2 Produtos caros e produtos com estoque baixo
+SELECT nome, preco, 'Barato' AS categoria  
+FROM produtos
+WHERE preco < 50
+UNION
+SELECT nome, estoque, 'Baixo estoque' AS categoria
+from produtos
+WHERE estoque < 10;
 
--- 13.1 Produtos do tipo Bolo
--- e produtos do tipo Doce
-
- 
-
--- 13.2 Produtos caros e produtos
--- com estoque baixo
-
- 
-
--- 13.3 Datas com vendas acima
--- de 50 e datas com vendas abaixo de 20
-
- 
-
- 
+-- 13.3 Datas com vendas acima de 50 e datas com vendas abaixo de 20
+SELECT valor, data_venda
+FROM vendas 
+WHERE valor > 50
+UNION
+SELECT valor, data_venda
+FROM vendas 
+WHERE valor < 20;
 
 -- =========================================
 -- BETWEEN
+-- 14.1 Produtos com preço entre 5 e 15
+SELECT * FROM produtos
+WHERE preco BETWEEN 5 AND 15;
 
- 
+-- 14.2 Produtos com estoque entre 10 e 30
+SELECT * FROM produtos 
+WHERE estoque BETWEEN 10 AND 30;
 
--- 14.1 Produtos com preço
--- entre 5 e 15
-
- 
-
--- 14.2 Produtos com estoque
--- entre 10 e 30
-
- 
-
--- 14.3 Vendas feitas entre
--- 2025-06-03 e 2025-06-05
-
- 
-
- 
+-- 14.3 Vendas feitas entre 2025-06-03 e 2025-06-05
+SELECT * FROM vendas
+WHERE data_venda BETWEEN '2025-06-03' AND '2025-06-05';
 
 -- =========================================
 -- LIKE
+-- 15.1 Produtos com nome terminando em Chocolate
+SELECT * FROM produtos 
+WHERE nome LIKE '%Chocolate';
 
- 
+-- 15.2 Produtos contendo a palavra Pão
+SELECT * FROM produtos 
+WHERE nome LIKE '%Pão%';
 
--- 15.1 Produtos com nome
--- terminando em Chocolate
-
- 
-
--- 15.2 Produtos contendo
--- a palavra Pão
-
- 
-
--- 15.3 Produtos que começam
--- com a letra C
-
- 
-
- 
+-- 15.3 Produtos que começam com a letra C
+SELECT * FROM produtos 
+WHERE nome LIKE 'C%';
 
 -- =========================================
 -- NULL / NOT NULL
-
- 
-
 -- 16.1 Produtos com preço preenchido
-
- 
+SELECT * FROM produtos
+WHERE preco IS NOT NULL;
 
 -- 16.2 Vendas com data preenchida
-
- 
+SELECT * FROM vendas
+WHERE data_venda IS NOT NULL;
 
 -- 16.3 Produtos com estoque preenchido
-
- 
-
- 
+SELECT * FROM produtos
+WHERE estoque IS NOT NULL;
 
 -- =========================================
 -- ORDER BY
+-- 17.1 Produtos ordenados do maior estoque para o menor
+SELECT * FROM produtos
+ORDER BY estoque DESC;
 
- 
+-- 17.2 Produtos ordenados alfabeticamente
+SELECT * FROM produtos
+ORDER BY nome ASC;
 
--- 17.1 Produtos ordenados
--- do maior estoque para o menor
-
- 
-
--- 17.2 Produtos ordenados
--- alfabeticamente
-
- 
-
--- 17.3 Vendas ordenadas
--- por maior valor
-
- 
-
- 
+-- 17.3 Vendas ordenadas por maior valor
+SELECT * FROM vendas
+ORDER BY valor DESC;
 
 -- =========================================
 -- TRIM
+-- 18.1 Remover espaços do nome dos produtos
+SELECT TRIM(nome) AS nome_limpo
+FROM produtos;
 
- 
+-- 18.2 Remover espaços do tipo dos produtos
+SELECT TRIM(tipo) AS tipo_limpo
+FROM produtos;
 
--- 18.1 Remover espaços
--- do nome dos produtos
-
- 
-
--- 18.2 Remover espaços
--- do tipo dos produtos
-
- 
-
--- 18.3 Remover espaços
--- do nome das vendas
-
- 
-
- 
+-- 18.3 Remover espaços do nome das vendas
+SELECT TRIM(nome) AS nome_limpo
+FROM vendas;
 
 -- =========================================
 -- REPLACE
+-- 19.1 Trocar "Bolo" por "Torta"
+SELECT nome, REPLACE(nome, 'Bolo', 'Torta') AS nome_novo
+FROM produtos;
 
- 
+-- 19.2 Trocar "Pão" por "Padaria"
+SELECT nome, REPLACE(nome, 'Pão', 'Padaria') AS nome_novo
+FROM produtos;
 
--- 19.1 Trocar "Bolo"
--- por "Torta"
-
- 
-
--- 19.2 Trocar "Pão"
--- por "Padaria"
-
- 
-
--- 19.3 Trocar "Chocolate"
--- por "Choco"
-
- 
-
- 
+-- 19.3 Trocar "Chocolate" por "Choco"
+SELECT nome, REPLACE(nome, 'Chocolate', 'Choco') AS nome_novo
+FROM produtos;
 
 -- =========================================
 -- SUBSTRING
+-- 20.1 Primeiras 4 letras dos produtos
+SELECT SUBSTRING(nome, 1, 4) AS 4_letras
+FROM produtos;
 
- 
+-- 20.2 Últimas 3 letras dos produtos
+SELECT SUBSTRING(nome, -3) AS 3_letras
+FROM produtos;
 
--- 20.1 Primeiras 4 letras
--- dos produtos
-
- 
-
--- 20.2 Últimas 3 letras
--- dos produtos
-
- 
-
--- 20.3 Extrair o mês
--- das datas de venda
-
- 
-
- 
+-- 20.3 Extrair o mês das datas de venda
+SELECT SUBSTRING(data_venda, 6, 2) AS mes_vendas
+FROM vendas;
 
 -- =========================================
 -- UPPER
-
- 
-
 -- 21.1 Produtos em maiúsculo
-
- 
+SELECT UPPER(nome) 
+FROM produtos;
 
 -- 21.2 Tipos em maiúsculo
+SELECT UPPER(tipo) 
+FROM produtos;
 
- 
 
--- 21.3 Produtos vendidos
--- em maiúsculo
-
- 
-
- 
+-- 21.3 Produtos vendidos em maiúsculo
+SELECT UPPER(id_produto) 
+FROM vendas;
 
 -- =========================================
 -- LENGTH
+-- 22.1 Produtos com nomes maiores que 12 caracteres
+SELECT nome, LENGTH(nome) AS qt_letras
+FROM produtos
+WHERE LENGTH(nome) > 12;
 
- 
+-- 22.2 Produtos com nomes menores que 8 caracteres
+SELECT nome, LENGTH(nome) AS qt_letras
+FROM produtos
+WHERE LENGTH(nome) < 8;
 
--- 22.1 Produtos com nomes
--- maiores que 12 caracteres
-
- 
-
--- 22.2 Produtos com nomes
--- menores que 8 caracteres
-
- 
-
--- 22.3 Produtos com tipo
--- maior que 5 letras
-
- 
-
- 
+-- 22.3 Produtos com tipo maior que 5 letras
+SELECT tipo, LENGTH(tipo) AS qt_tipo
+FROM produtos
+WHERE LENGTH(tipo) > 5;
 
 -- =========================================
 -- CAST
+-- 23.1 Converter preço para inteiro
+SELECT nome, CAST(preco AS SIGNED) AS preco_int
+FROM produtos;
 
- 
+-- 23.2 Converter valor das vendas para inteiro
+SELECT id_venda, CAST(valor AS SIGNED) AS valor_int
+FROM vendas;
 
--- 23.1 Converter preço
--- para inteiro
-
- 
-
--- 23.2 Converter valor
--- das vendas para inteiro
-
- 
-
--- 23.3 Converter data
--- para texto
-
- 
-
- 
+-- 23.3 Converter data para texto
+SELECT data_venda, CAST(data_venda AS CHAR) AS data_texto
+FROM vendas;
 
 -- =========================================
 -- CONCAT
+-- 24.1 Nome do produto junto com o preço
+SELECT CONCAT(nome, ' - R$ ', preco) AS produto_preco
+FROM produtos;
 
- 
-
--- 24.1 Nome do produto
--- junto com o preço
-
- 
-
--- 24.2 Produto vendido
--- junto com quantidade
-
- 
+-- 24.2 Produto vendido junto com quantidade
+SELECT CONCAT(id_produto, ' - Quantidade: ', quantidade) AS venda_produto
+FROM vendas;
 
 -- 24.3 Produto junto com tipo
-
- 
-
- 
+SELECT CONCAT(nome, ' - ', tipo) AS produto_tipo
+FROM produtos;
 
 -- =========================================
 -- CASE WHEN
+-- 25.1 Classificar produtos pelo estoque
+SELECT nome, estoque,
+    CASE
+        WHEN estoque < 10 THEN 'Baixo'
+        WHEN estoque BETWEEN 10 AND 30 THEN 'Médio'
+        ELSE 'Alto'
+    END AS classificacao_estoque
+FROM produtos;
 
- 
+-- 25.2 Classificar produtos pelo preço
+SELECT nome, preco,
+    CASE
+        WHEN preco < 10 THEN 'Barato'
+        WHEN preco BETWEEN 10 AND 20 THEN 'Médio'
+        ELSE 'Caro'
+    END AS classificacao_preco
+FROM produtos;
 
--- 25.1 Classificar produtos
--- pelo estoque
-
- 
-
--- 25.2 Classificar produtos
--- pelo preço
-
- 
-
--- 25.3 Classificar vendas
--- pelo valor
+-- 25.3 Classificar vendas pelo valor
+SELECT id_venda, valor,
+    CASE
+        WHEN valor < 20 THEN 'Baixa'
+        WHEN valor BETWEEN 20 AND 40 THEN 'Média'
+        ELSE 'Alta'
+    END AS classificacao_venda
+FROM vendas;
