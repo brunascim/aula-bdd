@@ -1446,60 +1446,54 @@ GROUP BY data_venda;
 -- =========================================
 -- COUNT
 -- 10.1 Quantidade de produtos por tipo
-SELECT tipo, COUNT(*) AS quantidade_produtos
+SELECT tipo, COUNT(*) AS quantidade_tipos
 FROM produtos
 GROUP BY tipo;
 
--- 10.2 Quantidade de vendas
--- por produto
+-- 10.2 Quantidade de vendas por produto
+SELECT id_produto, COUNT(quantidade) AS quantidade_produto
+FROM vendas
+GROUP BY id_produto;
 
- 
 
--- 10.3 Quantidade de produtos
--- com estoque abaixo de 20
-
- 
-
- 
+-- 10.3 Quantidade de produtos com estoque abaixo de 20
+SELECT COUNT(*) AS quantidade_produtos
+FROM produtos
+WHERE estoque < 20;
 
 -- =========================================
 -- GROUP BY
-
- 
-
 -- 11.1 Total vendido por produto
+SELECT id_produto, SUM(valor) AS total_vendido
+FROM vendas
+GROUP BY id_produto;
 
- 
-
--- 11.2 Quantidade total vendida
--- por data
-
- 
+-- 11.2 Quantidade total vendida por data
+SELECT data_venda, SUM(quantidade) AS qt_data 
+FROM vendas
+GROUP BY data_venda;
 
 -- 11.3 Média de estoque por tipo
-
- 
-
- 
+SELECT tipo, ROUND(AVG(estoque),2) AS media_estoque
+FROM produtos
+GROUP BY tipo;
 
 -- =========================================
 -- HAVING
+-- 12.1 Tipos com média de preço acima de 10 reais
+SELECT tipo, ROUND(AVG(preco),2) AS media_preco
+FROM produtos 
+GROUP BY tipo
+HAVING ROUND(AVG(preco),2) > 10;
 
- 
-
--- 12.1 Tipos com média de preço
--- acima de 10 reais
-
- 
-
--- 12.2 Produtos com soma de vendas
--- maior que 50 reais
-
- 
+-- 12.2 Produtos com soma de vendas maior que 50 reais
+SELECT id_produto, SUM(valor) AS vendas
+FROM vendas
+GROUP BY id_produto
+HAVING SUM(valor) > 50;
 
 -- 12.3 Datas com mais de 2 vendas
-
- 
+SELECT data_venda, quantidade
 
  
 
