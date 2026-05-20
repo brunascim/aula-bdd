@@ -1446,9 +1446,9 @@ GROUP BY data_venda;
 -- =========================================
 -- COUNT
 -- 10.1 Quantidade de produtos por tipo
-SELECT COUNT(quantidade)
+SELECT tipo, COUNT(*) AS quantidade_produtos
 FROM produtos
-GROUP BY 
+GROUP BY tipo;
 
 -- 10.2 Quantidade de vendas
 -- por produto
