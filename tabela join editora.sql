@@ -432,7 +432,6 @@ FROM editoras e
 RIGHT JOIN pedidos p ON e.id = p.id_editora
 WHERE e.id IS NULL;
 
-
 -- 24) Mostrar livros sem pedidos utilizando RIGHT JOIN
 SELECT l.* 
 FROM pedidos p 
@@ -444,7 +443,6 @@ SELECT e.*
 FROM pedidos p 
 RIGHT JOIN editoras e ON e.id = p.id_editora
 WHERE p.id IS NULL;
-
 
 -- 26) Mostrar clientes sem pedidos utilizando RIGHT JOIN
 SELECT c.* 
@@ -559,12 +557,12 @@ LEFT JOIN livros l ON l.id = p.id_livro
 WHERE l.id IS NULL;
 
 -- 37) Mostrar editoras sem vendas e vendas sem editoras válidas
-SELECT e.id AS editora
+SELECT e.nome, e.id AS editora
 FROM editoras e
 LEFT JOIN pedidos p ON e.id = p.id_editora
 WHERE p.id IS NULL
 UNION
-SELECT p.id AS pedido
+SELECT e.nome, p.id AS pedido
 FROM pedidos p
 LEFT JOIN editoras e ON e.id = p.id_editora
 WHERE e.id IS NULL;

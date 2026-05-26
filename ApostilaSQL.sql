@@ -753,10 +753,261 @@ SELECT *
 FROM desempenho_vendas;
 
 -- 
-
  CREATE VIEW desempenho_vendas1 AS
 SELECT id_produto, quantidade
 FROM vendas;
 
 SELECT *
 FROM desempenho_vendas1;
+
+ALTER TABLE produtos
+ADD estoque INT;
+
+UPDATE produtos SET estoque = 15 WHERE id_produto = 1;
+UPDATE produtos SET estoque = 60 WHERE id_produto = 2;
+UPDATE produtos SET estoque = 25 WHERE id_produto = 3;
+UPDATE produtos SET estoque = 100 WHERE id_produto = 4;
+UPDATE produtos SET estoque = 8 WHERE id_produto = 5;
+UPDATE produtos SET estoque = 35 WHERE id_produto = 6;
+UPDATE produtos SET estoque = 50 WHERE id_produto = 7;
+UPDATE produtos SET estoque = 18 WHERE id_produto = 8;
+UPDATE produtos SET estoque = 90 WHERE id_produto = 9;
+UPDATE produtos SET estoque = 5 WHERE id_produto = 10;
+UPDATE produtos SET estoque = 45 WHERE id_produto = 11;
+UPDATE produtos SET estoque = 70 WHERE id_produto = 12;
+UPDATE produtos SET estoque = 20 WHERE id_produto = 13;
+UPDATE produtos SET estoque = 110 WHERE id_produto = 14;
+UPDATE produtos SET estoque = 12 WHERE id_produto = 15;
+UPDATE produtos SET estoque = 40 WHERE id_produto = 16;
+UPDATE produtos SET estoque = 65 WHERE id_produto = 17;
+UPDATE produtos SET estoque = 22 WHERE id_produto = 18;
+UPDATE produtos SET estoque = 85 WHERE id_produto = 19;
+UPDATE produtos SET estoque = 7 WHERE id_produto = 20;
+
+INSERT INTO clientes VALUES
+(41, 'Paula Mendes', '(11)99999-0001', 'Campinas',
+'paula@email.com', 'Feminino',
+'Rua Nova, 10', 4500, '1990-01-01'),
+
+(42, 'Ricardo Alves', '(11)99999-0002', 'Sorocaba',
+'ricardo@email.com', 'Masculino',
+'Rua Azul, 20', 7000, '1985-03-15');
+
+INSERT INTO funcionarios VALUES
+(11, 'Márcia Lima', '1992-05-20',
+'Feminino', 'Solteira', 0,
+'Vendedora', 3100),
+
+(12, 'João Pedro', '1995-08-11',
+'Masculino', 'Solteiro', 0,
+'Caixa', 2800);
+
+INSERT INTO fornecedores VALUES
+(4, 'Fornecedor D', 'Curitiba',
+'Rua Nova Esperança', 4567);
+
+INSERT INTO categorias VALUES
+(6, 'Brinquedos');
+
+INSERT INTO produtos VALUES
+(21, 'Tablet Gamer', 2200, 1, 1, 10),
+(22, 'Perfume Floral', 180, 5, 2, 30),
+(23, 'Boneca Infantil', 90, 6, 1, 50);
+
+ALTER TABLE produtos
+DROP FOREIGN KEY produtos_ibfk_1;
+
+INSERT INTO produtos VALUES
+(24, 'Produto Sem Fornecedor',
+150, 2, NULL, 12);
+
+ALTER TABLE produtos
+DROP FOREIGN KEY produtos_ibfk_2;
+
+INSERT INTO produtos VALUES
+(25, 'Produto Sem Categoria',
+300, NULL, 1, 9);
+
+-- INNER JOIN
+-- 1)Mostrar nome do cliente e produto comprado
+SELECT c.nome,  p.nome, p.preco
+FROM clientes c
+INNER JOIN vendas v ON c.id_cliente = v.id_cliente
+INNER JOIN produtos p ON p.id_produto = v.id_produto;
+
+
+-- 2) Mostrar funcionário e data da venda
+SELECT f.nome, v.data
+FROM funcionarios f 
+INNER JOIN vendas v ON f.id_funcionario = v.id_funcionario; 
+
+-- 3) Mostrar produto, categoria e fornecedor
+SELECT p.nome AS Produto, 
+		c.nome AS Categoria, 
+        forn.nome AS Fornecedor
+FROM produtos p 
+INNER JOIN categorias c ON p.id_categoria = c.id_categoria
+INNER JOIN fornecedores forn ON forn.id_fornecedor = p.id_fornecedor;
+
+-- LEFT JOIN
+-- 1) Mostrar todos os clientes incluindo os que nunca compraram
+SELECT c.*
+FROM clientes c 
+LEFT JOIN vendas v ON c.id_cliente = v.id_cliente;
+
+-- 2) Mostrar todos os produtos incluindo os que nunca foram vendidos
+SELECT p.*
+FROM produtos p 
+LEFT JOIN vendas v ON p.id_produto = v.id_produto;
+
+-- 3) Mostrar todas as categorias incluindo categorias sem produtos
+SELECT DISTINCT c.* 
+FROM categorias c
+LEFT JOIN produtos p ON p.id_categoria = c.id_categoria;
+
+-- RIGHT JOIN
+-- 1) Mostrar todas as vendas incluindo vendas sem cliente correspondente
+SELECT v.*, c.nome
+FROM clientes c 
+RIGHT JOIN vendas v ON v.id_cliente = c.id_cliente;
+
+
+-- 2) Mostrar todos os fornecedores incluindo os que não possuem produtos
+SELECT forn.*
+FROM produtos p 
+RIGHT JOIN fornecedores forn ON p.id_fornecedor = forn.id_fornecedor;
+
+
+-- 3) Mostrar todos os funcionários incluindo os que nunca realizaram vendas
+SELECT f.* 
+FROM vendas v 
+RIGHT JOIN funcionarios f ON v.id_funcionario = f.id_funcionario; 
+
+
+-- FULL JOIN
+-- 1) Mostrar todos os clientes e todas as vendas, associados ou não
+SELECT *
+FROM clientes c
+LEFT JOIN vendas v ON c.id_cliente = v.id_cliente
+UNION
+SELECT *
+FROM clientes c
+RIGHT JOIN vendas v ON c.id_cliente = v.id_cliente;
+
+-- 2) Mostrar todos os produtos
+-- e todas as categorias, associados ou não
+SELECT *
+FROM produtos p
+LEFT JOIN categorias c ON p.id_categoria = c.id_categoria
+UNION
+SELECT *
+FROM produtos p
+RIGHT JOIN categorias c ON p.id_categoria = c.id_categoria;
+
+-- 3) Mostrar todos os fornecedores
+-- e todos os produtos, associados ou não
+SELECT *
+FROM fornecedores f
+LEFT JOIN produtos p ON f.id_fornecedor = p.id_fornecedor
+UNION
+SELECT *
+FROM fornecedores f
+RIGHT JOIN produtos p ON f.id_fornecedor = p.id_fornecedor;
+
+-- ANTI JOIN
+-- 1) Mostrar clientes que nunca compraram
+SELECT c.* 
+FROM clientes c 
+LEFT JOIN vendas v ON v.id_cliente = c.id_cliente
+WHERE v.id_venda IS NULL;
+
+
+-- 2) Mostrar produtos que nunca foram vendidos
+SELECT p.* 
+FROM produtos p 
+LEFT JOIN vendas v ON v.id_produto = p.id_produto
+WHERE v.id_venda IS NULL;
+
+
+-- 3) Mostrar funcionários que nunca fizeram vendas
+SELECT f.* 
+FROM funcionarios f 
+LEFT JOIN vendas v ON v.id_funcionario = f.id_funcionario
+WHERE v.id_venda IS NULL;
+
+
+-- ANTI LEFT JOIN
+-- 1) Mostrar categorias sem produtos
+SELECT c.*
+FROM categorias c 
+LEFT JOIN produtos p ON p.id_categoria = c.id_categoria
+WHERE p.id_produto IS NULL;
+
+
+-- 2) Mostrar fornecedores sem produtos
+SELECT forn.*
+FROM fornecedores forn
+LEFT JOIN produtos p ON p.id_fornecedor = forn.id_fornecedor
+WHERE p.id_produto IS NULL;
+
+-- 3) Mostrar clientes sem compras
+SELECT c.*
+FROM clientes c
+LEFT JOIN vendas v ON v.id_cliente = c.id_cliente
+WHERE v.id_venda IS NULL;
+
+-- ANTI RIGHT JOIN
+-- 1) Mostrar vendas sem clientes válidos
+SELECT v.* 
+FROM clientes c 
+RIGHT JOIN vendas v ON v.id_cliente = c.id_cliente
+WHERE c.id_cliente IS NULL;
+
+-- 2) Mostrar produtos sem categoria
+SELECT p.* 
+FROM categorias c 
+RIGHT JOIN produtos p ON p.id_categoria = c.id_categoria
+WHERE c.id_categoria IS NULL;
+
+-- 3) Mostrar produtos sem fornecedor
+SELECT p.* 
+FROM fornecedores forn 
+RIGHT JOIN produtos p ON p.id_fornecedor = forn.id_fornecedor
+WHERE  forn.id_fornecedor IS NULL;
+
+-- ANTI FULL JOIN
+-- 1) Mostrar clientes sem vendas e vendas sem clientes
+SELECT c.nome, v.id_venda 
+FROM clientes c 
+LEFT JOIN vendas v ON v.id_cliente = c.id_cliente
+WHERE v.id_venda IS NULL
+UNION
+SELECT c.nome, v.id_venda 
+FROM clientes c 
+RIGHT JOIN vendas v ON v.id_cliente = c.id_cliente
+WHERE c.id_cliente IS NULL;
+
+-- 2)Mostrar produtos sem categoria e categorias sem produtos
+SELECT p.nome, c.nome 
+FROM produtos p
+LEFT JOIN categorias c ON p.id_categoria = c.id_categoria
+WHERE c.id_categoria IS NULL
+UNION 
+SELECT p.nome, c.nome
+FROM produtos p
+RIGHT JOIN categorias c ON p.id_categoria = c.id_categoria
+WHERE p.id_produto IS NULL;
+
+
+-- 3) Mostrar fornecedores sem produtos e produtos sem fornecedor
+SELECT forn.nome, p.nome
+FROM fornecedores forn
+LEFT JOIN produtos p 
+    ON p.id_fornecedor = forn.id_fornecedor
+WHERE p.id_produto IS NULL
+UNION
+SELECT forn.nome, p.nome
+FROM fornecedores forn
+RIGHT JOIN produtos p 
+    ON p.id_fornecedor = forn.id_fornecedor
+WHERE forn.id_fornecedor IS NULL;
