@@ -835,7 +835,6 @@ FROM clientes c
 INNER JOIN vendas v ON c.id_cliente = v.id_cliente
 INNER JOIN produtos p ON p.id_produto = v.id_produto;
 
-
 -- 2) Mostrar funcionário e data da venda
 SELECT f.nome, v.data
 FROM funcionarios f 
@@ -851,68 +850,68 @@ INNER JOIN fornecedores forn ON forn.id_fornecedor = p.id_fornecedor;
 
 -- LEFT JOIN
 -- 1) Mostrar todos os clientes incluindo os que nunca compraram
-SELECT c.*
+SELECT c.nome, v.id_venda
 FROM clientes c 
 LEFT JOIN vendas v ON c.id_cliente = v.id_cliente;
 
 -- 2) Mostrar todos os produtos incluindo os que nunca foram vendidos
-SELECT p.*
+SELECT p.nome, v.id_venda
 FROM produtos p 
 LEFT JOIN vendas v ON p.id_produto = v.id_produto;
 
 -- 3) Mostrar todas as categorias incluindo categorias sem produtos
-SELECT DISTINCT c.* 
+SELECT c.nome AS categoria, p.nome AS produto
 FROM categorias c
 LEFT JOIN produtos p ON p.id_categoria = c.id_categoria;
 
 -- RIGHT JOIN
 -- 1) Mostrar todas as vendas incluindo vendas sem cliente correspondente
-SELECT v.*, c.nome
+SELECT v.id_venda, c.nome
 FROM clientes c 
 RIGHT JOIN vendas v ON v.id_cliente = c.id_cliente;
 
 
 -- 2) Mostrar todos os fornecedores incluindo os que não possuem produtos
-SELECT forn.*
+SELECT forn.nome AS Fornecedor, p.nome AS produto
 FROM produtos p 
 RIGHT JOIN fornecedores forn ON p.id_fornecedor = forn.id_fornecedor;
 
 
 -- 3) Mostrar todos os funcionários incluindo os que nunca realizaram vendas
-SELECT f.* 
+SELECT f.nome, v.id_venda 
 FROM vendas v 
 RIGHT JOIN funcionarios f ON v.id_funcionario = f.id_funcionario; 
 
 
 -- FULL JOIN
 -- 1) Mostrar todos os clientes e todas as vendas, associados ou não
-SELECT *
+SELECT c.*
 FROM clientes c
 LEFT JOIN vendas v ON c.id_cliente = v.id_cliente
 UNION
-SELECT *
+SELECT c.*
 FROM clientes c
 RIGHT JOIN vendas v ON c.id_cliente = v.id_cliente;
 
 -- 2) Mostrar todos os produtos
 -- e todas as categorias, associados ou não
-SELECT *
+SELECT p.*
 FROM produtos p
 LEFT JOIN categorias c ON p.id_categoria = c.id_categoria
 UNION
-SELECT *
+SELECT p.*
 FROM produtos p
 RIGHT JOIN categorias c ON p.id_categoria = c.id_categoria;
 
 -- 3) Mostrar todos os fornecedores
 -- e todos os produtos, associados ou não
-SELECT *
-FROM fornecedores f
-LEFT JOIN produtos p ON f.id_fornecedor = p.id_fornecedor
+SELECT forn.nome AS fornecedores , p.nome AS produtos
+FROM fornecedores forn
+LEFT JOIN produtos p ON forn.id_fornecedor = p.id_fornecedor
 UNION
-SELECT *
-FROM fornecedores f
-RIGHT JOIN produtos p ON f.id_fornecedor = p.id_fornecedor;
+SELECT forn.nome AS fornecedores , p.nome AS produtos
+FROM fornecedores forn
+RIGHT JOIN produtos p ON forn.id_fornecedor = p.id_fornecedor;
 
 -- ANTI JOIN
 -- 1) Mostrar clientes que nunca compraram
@@ -958,7 +957,7 @@ WHERE v.id_venda IS NULL;
 
 -- ANTI RIGHT JOIN
 -- 1) Mostrar vendas sem clientes válidos
-SELECT v.* 
+SELECT v.*
 FROM clientes c 
 RIGHT JOIN vendas v ON v.id_cliente = c.id_cliente
 WHERE c.id_cliente IS NULL;
