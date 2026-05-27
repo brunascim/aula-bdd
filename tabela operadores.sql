@@ -94,11 +94,24 @@ INSERT INTO curso_excel (nome) VALUES
 ('Karen');
 
 -- Contar alunos em python e SQL
-SELECT COUNT(*) AS TOTAL_ALUNOS		
+SELECT 'Python' AS CURSOS, COUNT(*) AS TOTAL_ALUNOS		
 FROM curso_python 
 UNION ALL
-SELECT COUNT(*) AS ALUNOS_SQL
+SELECT 'SQL', COUNT(*) 
 FROM curso_sql; 
+-- OU
+SELECT COUNT(*) AS quantidade
+FROM (
+    SELECT nome FROM curso_sql
+        INTERSECT
+        SELECT nome FROM curso_python
+) AS interseção;
+-- OU
+Select 'Phyton' as curso, count(id) as Quantidade
+from curso_python
+Union 
+Select 'SQL' as curso, count(id) as Quantidade
+from curso_sql;
 
 -- alunos presentes nos 3 cursos
 SELECT nome
@@ -131,6 +144,21 @@ FROM (
 ) AS cursos
 GROUP BY nome
 HAVING COUNT(*) >= 2;
+-- OU 
+SELECT 
+    aluno,
+        COUNT(DISTINCT curso) AS quantidade_curso,
+        GROUP_CONCAT(DISTINCT curso ORDER BY curso) AS cursos
+FROM (
+    SELECT nome AS aluno, 'SQL' AS curso FROM curso_sql
+        UNION ALL
+        SELECT nome, 'Python' FROM curso_python
+        UNION ALL
+        SELECT nome, 'Excel' FROM curso_excel
+) AS todos_alunos
+GROUP BY aluno
+HAVING COUNT(DISTINCT curso) >= 2
+ORDER BY cursos DESC, aluno;
 
 -- alunos que estão em 2 cursos diferentes, mas não em 3
 SELECT nome, COUNT(*) AS qnt_cursos
@@ -143,6 +171,30 @@ FROM (
 ) AS cursos
 GROUP BY nome
 HAVING COUNT(*) = 2;
+-- OU 
+SELECT nome
+FROM (
+    SELECT nome FROM curso_sql
+        INTERSECT
+        SELECT nome FROM curso_python
+        UNION
+        SELECT nome FROM curso_sql
+        INTERSECT 
+        SELECT nome FROM curso_excel
+        UNION 
+        SELECT nome FROM curso_python
+        INTERSECT
+        SELECT nome FROM curso_excel
+) AS dois_cursos
+EXCEPT
+(
+  SELECT nome
+    FROM curso_sql
+    INTERSECT
+    SELECT nome FROM curso_python
+    INTERSECT
+    SELECT nome FROM curso Excel
+);
 
 -- alunos em SQL e Python
 SELECT nome 
@@ -194,6 +246,15 @@ FROM curso_python
 EXCEPT
 SELECT nome
 FROM curso_excel;
+-- OU 
+SELECT nome
+FROM curso_sql
+except
+(select nome 
+from curso_python
+union
+select nome
+from curso_excel);
 
 -- alunos apenas no curso de Python (exclusivos)
 SELECT nome
@@ -214,7 +275,7 @@ FROM curso_python
 EXCEPT
 SELECT nome
 FROM curso_sql;
-
+ 
 -- alunos comuns entre SQL e Python
 SELECT nome 
 FROM curso_sql

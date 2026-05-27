@@ -1010,3 +1010,85 @@ FROM fornecedores forn
 RIGHT JOIN produtos p 
     ON p.id_fornecedor = forn.id_fornecedor
 WHERE forn.id_fornecedor IS NULL;
+
+-- UNION
+-- 1) Mostrar todos os nomes de clientes e funcionários
+-- sem repetir nomes iguais
+SELECT nome FROM clientes
+UNION
+SELECT nome FROM funcionarios;
+
+-- 2) Mostrar todas as cidades cadastradas
+-- entre clientes e fornecedores
+SELECT cidade FROM clientes 
+UNION 
+SELECT cidade FROM fornecedores;
+
+
+-- 3) Mostrar produtos baratos e produtos caros
+-- em uma única consulta
+
+ 
+
+ 
+
+-- UNION ALL
+-- 1) Mostrar todos os nomes de clientes e funcionários
+-- mantendo nomes repetidos
+
+ 
+
+ 
+
+-- 2) Mostrar todas as cidades de clientes e fornecedores
+-- incluindo repetições
+
+ 
+
+ 
+
+-- 3) Mostrar todos os produtos vendidos em julho
+-- e todos os produtos vendidos em agosto
+-- mantendo repetições
+
+ 
+
+ 
+
+-- INTERSECT
+-- 1) Mostrar nomes que existem
+-- tanto em clientes quanto em funcionários
+
+ 
+
+ 
+
+-- 2) Mostrar cidades que aparecem
+-- tanto em clientes quanto em fornecedores
+
+ 
+
+-- 3) Mostrar produtos vendidos
+-- tanto em julho quanto em agosto
+
+ 
+
+ 
+
+-- EXCEPT
+-- 1) Mostrar nomes de clientes
+-- que não existem em funcionários
+
+ 
+
+ 
+
+-- 2) Mostrar cidades dos clientes
+-- que não aparecem nos fornecedores
+
+ 
+
+ 
+
+-- 3) Mostrar produtos vendidos em julho
+-- mas não vendidos em agosto

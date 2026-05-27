@@ -1704,10 +1704,13 @@ SELECT nome, preco,
 FROM produtos;
 
 -- 25.3 Classificar vendas pelo valor
-SELECT id_venda, valor,
+SELECT 
+    id_venda,
+    valor,
     CASE
         WHEN valor < 20 THEN 'Baixa'
         WHEN valor BETWEEN 20 AND 40 THEN 'Média'
         ELSE 'Alta'
     END AS classificacao_venda
-FROM vendas;
+FROM
+    vendas;
