@@ -1027,68 +1027,722 @@ SELECT cidade FROM fornecedores;
 
 -- 3) Mostrar produtos baratos e produtos caros
 -- em uma única consulta
-
- 
-
- 
+SELECT nome, preco, 'Barato' AS categoria
+FROM produtos
+WHERE preco < 50 
+UNION 
+SELECT nome, preco, 'Caro' AS categoria 
+FROM produtos 
+WHERE preco > 50;
 
 -- UNION ALL
 -- 1) Mostrar todos os nomes de clientes e funcionários
 -- mantendo nomes repetidos
-
- 
-
- 
+SELECT nome
+FROM clientes
+UNION ALL
+SELECT nome 
+FROM funcionarios; 
 
 -- 2) Mostrar todas as cidades de clientes e fornecedores
 -- incluindo repetições
-
- 
-
- 
+SELECT cidade
+FROM clientes 
+UNION ALL
+SELECT cidade 
+FROM fornecedores;
 
 -- 3) Mostrar todos os produtos vendidos em julho
 -- e todos os produtos vendidos em agosto
 -- mantendo repetições
-
- 
-
- 
+SELECT p.nome, p.id_produto, v.id_venda, v.data
+FROM produtos p 
+INNER JOIN vendas v ON  p.id_produto = v.id_produto
+WHERE v.data BETWEEN '2024-07-01' AND '2024-07-31'
+UNION ALL 
+SELECT p.nome, p.id_produto, v.id_venda, v.data
+FROM produtos p 
+INNER JOIN vendas v ON  p.id_produto = v.id_produto
+WHERE v.data BETWEEN '2024-08-01' AND '2024-08-31';
 
 -- INTERSECT
 -- 1) Mostrar nomes que existem
 -- tanto em clientes quanto em funcionários
-
- 
-
- 
+SELECT nome 
+FROM clientes
+INTERSECT 
+SELECT nome 
+FROM funcionarios; 
 
 -- 2) Mostrar cidades que aparecem
 -- tanto em clientes quanto em fornecedores
-
- 
+SELECT cidade 
+FROM clientes
+INTERSECT 
+SELECT cidade 
+FROM fornecedores;
 
 -- 3) Mostrar produtos vendidos
 -- tanto em julho quanto em agosto
-
- 
-
- 
+SELECT p.nome
+FROM produtos p
+INNER JOIN vendas v ON p.id_produto = v.id_produto
+WHERE v.data BETWEEN '2024-07-01' AND '2024-07-31'
+INTERSECT
+SELECT p.nome
+FROM produtos p
+INNER JOIN vendas v ON p.id_produto = v.id_produto
+WHERE v.data BETWEEN '2024-08-01' AND '2024-08-31';
 
 -- EXCEPT
 -- 1) Mostrar nomes de clientes
 -- que não existem em funcionários
-
- 
-
- 
+SELECT nome
+FROM clientes 
+EXCEPT 
+SELECT nome 
+FROM funcionarios;
 
 -- 2) Mostrar cidades dos clientes
 -- que não aparecem nos fornecedores
+SELECT cidade
+FROM clientes 
+EXCEPT
+SELECT cidade 
+FROM fornecedores;
 
- 
-
- 
 
 -- 3) Mostrar produtos vendidos em julho
 -- mas não vendidos em agosto
+SELECT p.nome 
+FROM produtos p 
+INNER JOIN vendas v ON v.id_produto = p.id_produto
+WHERE v.data BETWEEN '2024-07-01' AND '2024-07-31' 
+EXCEPT 
+SELECT p.nome
+FROM produtos p
+INNER JOIN vendas v ON p.id_produto = v.id_produto
+WHERE v.data BETWEEN '2024-08-01' AND '2024-08-31';
+
+-- EXERCÍCIOS AVANÇADOS
+
+-- 1) Mostrar os 5 clientes que mais gastaram na loja,
+-- exibindo:
+-- nome do cliente,
+-- quantidade total de produtos comprados,
+-- valor total gasto,
+-- ordenado do maior para o menor gasto.
+SELECT c.nome, 
+	SUM(v.quantidade) AS total_produtos,
+    SUM(v.quantidade * p.preco) AS valor_total_gasto
+FROM produtos p
+INNER JOIN vendas v ON v.id_produto = p.id_produto 
+INNER JOIN clientes c ON v.id_cliente = c.id_cliente
+GROUP BY c.id_cliente, c.nome
+ORDER BY valor_total_gasto DESC
+LIMIT 5;
+
+-- 2) Mostrar o nome do funcionário,
+-- quantidade de vendas realizadas,
+-- valor total vendido,
+-- apenas dos funcionários que venderam
+-- mais de R$ 5000 no total.
+SELECT f.nome,
+	  COUNT(v.id_venda) AS qnt_vendas,
+      SUM(v.quantidade * p.preco) AS valor_total
+FROM funcionarios f
+INNER JOIN vendas v ON f.id_funcionario = v.id_funcionario
+INNER JOIN produtos p ON v.id_produto = p.id_produto
+GROUP BY f.id_funcionario, f.nome
+HAVING SUM(v.quantidade * p.preco) > 5000;
+
+-- 3) Mostrar os produtos que nunca foram vendidos,
+-- incluindo:
+-- nome do produto,
+-- categoria,
+-- fornecedor,
+-- estoque.
+SELECT p.nome AS produto, 
+	   c.nome AS categoria,
+       f.nome AS fornecedor,
+       p.estoque
+FROM produtos p
+LEFT JOIN vendas v ON p.id_produto = v.id_produto
+INNER JOIN categorias c ON p.id_categoria = c.id_categoria
+INNER JOIN fornecedores f ON p.id_fornecedor = f.id_fornecedor
+WHERE v.id_venda IS NULL;
+
+-- 4) Mostrar os clientes que compraram
+-- produtos da categoria 'Eletrônicos',
+-- exibindo:
+-- nome do cliente,
+-- produto comprado,
+-- data da venda,
+-- valor total da compra.
+SELECT c.nome AS cliente,
+	   p.nome AS produto,
+       v.data,
+       SUM(v.quantidade * p.preco) AS valor_total
+FROM clientes c 
+INNER JOIN vendas v ON v.id_cliente = c.id_cliente
+INNER JOIN produtos p ON v.id_produto = p.id_produto
+INNER JOIN categorias cat ON p.id_categoria = cat.id_categoria
+WHERE cat.nome = 'Eletrônicos'
+GROUP BY c.nome, p.nome, v.data;
+
+
+-- 5) Mostrar a média de preço dos produtos
+-- por fornecedor,
+-- exibindo apenas fornecedores
+-- cuja média seja maior que 500.
+SELECT f.nome AS fornecedor, 
+	   ROUND(AVG(preco),2) AS media_preco
+FROM fornecedores f 
+INNER JOIN produtos p ON p.id_fornecedor = f.id_fornecedor
+GROUP BY f.nome
+HAVING AVG(preco) > 500;
+
+-- 6) Mostrar os clientes cuja renda
+-- é maior que a média de renda
+-- da própria cidade.
+SELECT c.nome, c.renda, c.cidade 
+FROM clientes c
+WHERE renda > (
+	SELECT AVG(renda)
+    FROM clientes 
+    WHERE cidade = c.cidade
+)
+;
+
+-- 7) Mostrar o produto mais caro
+-- de cada categoria.
+SELECT p.nome, p.preco
+FROM produtos p 
+WHERE preco = (
+	SELECT MAX(preco)
+    FROM produtos 
+	WHERE id_categoria = p.id_categoria
+)
+;
+
+-- 8) Mostrar os funcionários
+-- que possuem salário acima
+-- da média do cargo deles.
+SELECT f.nome, f.salario, f.cargo
+FROM funcionarios f
+WHERE salario > (
+	  SELECT AVG(salario)
+      FROM funcionarios 
+      WHERE cargo = f.cargo
+)
+;
+
+-- 9) Mostrar todas as categorias
+-- e a quantidade de produtos em cada uma,
+-- incluindo categorias sem produtos.
+SELECT c.nome AS categoria,
+	   COUNT(p.id_produto) AS quantidade
+FROM categorias c
+LEFT JOIN produtos p ON p.id_categoria = c.id_categoria
+GROUP BY c.nome;
+
+
+-- 10) Mostrar os clientes
+-- que realizaram compras em mais de 2 meses diferentes.
+SELECT c.nome AS cliente
+FROM clientes c
+INNER JOIN vendas v ON v.id_cliente = c.id_cliente
+GROUP BY c.id_cliente, c.nome
+HAVING COUNT(DISTINCT MONTH(v.data)) > 2;
+
+-- 11) Mostrar os produtos
+-- vendidos mais de 10 vezes no total, exibindo:
+-- nome do produto,
+-- total vendido,
+-- estoque atual.
+SELECT 
+    p.nome AS produto,
+    SUM(v.quantidade) AS total_vendido,
+    p.estoque AS estoque_atual
+FROM produtos p
+INNER JOIN vendas v ON v.id_produto = p.id_produto
+GROUP BY p.id_produto, p.nome, p.estoque
+HAVING SUM(v.quantidade) > 10;
+
+-- 12) Mostrar os clientes
+-- que nunca compraram produtos
+-- da categoria 'Alimentos'.
+SELECT c.nome
+FROM clientes c
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM vendas v
+    INNER JOIN produtos p 
+        ON v.id_produto = p.id_produto
+    INNER JOIN categorias cat 
+        ON p.id_categoria = cat.id_categoria
+    WHERE v.id_cliente = c.id_cliente
+      AND cat.nome = 'Alimentos'
+);
+
+-- 13) Mostrar os fornecedores
+-- que possuem mais de 3 produtos cadastrados.
+SELECT f.nome AS fornecedores, COUNT(p.id_produto) AS qnt_produtos
+FROM fornecedores f
+INNER JOIN produtos p ON p.id_fornecedor = f.id_fornecedor
+GROUP BY f.nome
+HAVING COUNT(p.id_produto) > 3;
+
+-- 14) Mostrar o faturamento total
+-- por mês em 2024,
+-- exibindo:
+-- mês,
+-- quantidade de vendas,
+-- valor total faturado.
+SELECT 
+	MONTH(v.data) AS mes, 
+    COUNT(v.id_venda) AS quantidade_vendas,
+    SUM(v.quantidade * p.preco) AS total_faturado
+FROM vendas v 
+INNER JOIN produtos p ON v.id_produto = p.id_produto
+WHERE YEAR(v.data) = 2024
+GROUP BY MONTH(v.data);
+
+
+-- 15) Mostrar os 3 produtos
+-- com maior faturamento total.
+SELECT p.nome AS produto,
+	   SUM(v.quantidade * p.preco) AS total_faturado
+FROM produtos p 
+INNER JOIN vendas v ON p.id_produto = v.id_produto
+GROUP BY p.id_produto, p.nome
+ORDER BY total_faturado DESC
+LIMIT 3;
+
+
+-- 16) Mostrar os clientes
+-- que possuem renda acima da média geral
+-- e já compraram produtos acima de R$ 1000.
+SELECT c.nome AS cliente, c.renda 
+FROM clientes c 
+INNER JOIN vendas v ON v.id_cliente = c.id_cliente 
+INNER JOIN produtos p ON v.id_produto = p.id_produto
+WHERE renda > (
+	SELECT AVG(renda)
+    FROM clientes 
+) 
+AND preco > 1000
+;
+
+-- 17) Mostrar os funcionários
+-- que nunca venderam produtos
+-- da categoria 'Eletrônicos'.
+
+SELECT f.nome
+FROM funcionarios f
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM vendas v
+    INNER JOIN produtos p 
+        ON v.id_produto = p.id_produto
+    INNER JOIN categorias cat 
+        ON p.id_categoria = cat.id_categoria
+    WHERE v.id_funcionario = f.id_funcionario
+      AND cat.nome = 'Eletrônicos'
+);
+
+-- 18) Mostrar os clientes
+-- que compraram o mesmo produto
+-- mais de uma vez.
+SELECT c.nome AS cliente,
+	   p.nome AS produto,
+       COUNT(v.id_venda) AS qnt_compras
+FROM clientes c 
+INNER JOIN vendas v ON v.id_cliente = c.id_cliente
+INNER JOIN produtos p ON v.id_produto = p.id_produto
+GROUP BY c.nome, p.nome
+HAVING COUNT(v.id_venda) > 1;
+
+-- 19) Mostrar:
+-- nome do cliente,
+-- idade,
+-- classificação:
+-- 'Jovem', 'Adulto' ou 'Sênior'
+-- usando CASE.
+SELECT nome, 
+	   TIMESTAMPDIFF(YEAR, data_nascimento, CURDATE()) AS idade,
+	CASE
+	   WHEN TIMESTAMPDIFF(YEAR, data_nascimento, CURDATE()) < 18 THEN 'Jovem'
+       WHEN TIMESTAMPDIFF(YEAR, data_nascimento, CURDATE()) BETWEEN 18 AND 40 THEN 'Adulto'
+	   ELSE 'Sênior'
+	END AS classificacao
+FROM clientes; 	  
+
+-- 20) Mostrar os produtos
+-- classificados como:
+-- 'Baixo Estoque',
+-- 'Estoque Médio'
+-- ou 'Alto Estoque'.
+SELECT nome, 
+	CASE 
+		WHEN estoque < 10 THEN 'Baixo Estoque'
+        WHEN estoque BETWEEN 10 AND 20 THEN 'Estoque Médio'
+        ELSE 'Alto Estoque'
+	END AS classificacao
+FROM produtos;
+
+-- 21) Mostrar os clientes
+-- que possuem o mesmo sobrenome
+-- de algum funcionário.
+SELECT DISTINCT
+    c.nome AS cliente,
+    f.nome AS funcionario
+FROM clientes c
+INNER JOIN funcionarios f
+ON SUBSTRING(c.nome, ' ', -1) = SUBSTRING(f.nome, ' ', -1);
+
+-- 22) Mostrar o total vendido
+-- por categoria de produto.
+SELECT 
+    c.nome AS categoria,
+    SUM(v.quantidade * p.preco) AS total_vendido
+FROM categorias c
+INNER JOIN produtos p ON p.id_categoria = c.id_categoria
+INNER JOIN vendas v ON v.id_produto = p.id_produto
+GROUP BY c.id_categoria, c.nome;
+
+-- 23) Mostrar a cidade
+-- com maior média de renda.
+SELECT cidade, ROUND(AVG(renda),2) AS media_renda
+FROM clientes 
+GROUP BY cidade
+ORDER BY AVG(renda) DESC
+LIMIT 1;
+
+-- 24) Mostrar os fornecedores
+-- que não possuem nenhum produto vendido.
+SELECT f.nome
+FROM fornecedores f
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM produtos p
+    INNER JOIN vendas v 
+        ON v.id_produto = p.id_produto
+    WHERE p.id_fornecedor = f.id_fornecedor
+);
+
+-- 25) Mostrar os clientes
+-- que fizeram compras em julho,
+-- agosto E setembro.
+SELECT 
+    c.nome
+FROM clientes c
+INNER JOIN vendas v 
+    ON v.id_cliente = c.id_cliente
+WHERE v.data BETWEEN '2024-07-01' AND '2024-09-30'
+GROUP BY c.id_cliente, c.nome
+HAVING COUNT(DISTINCT MONTH(v.data)) = 3;
+
+-- 26) Mostrar os produtos
+-- vendidos em julho,
+-- mas não vendidos em outubro.
+SELECT p.id_produto, p.nome 
+FROM produtos p 
+INNER JOIN vendas v ON v.id_produto = p.id_produto
+WHERE v.data BETWEEN '2024-07-01' AND '2024-07-31' 
+EXCEPT 
+SELECT p.id_produto, p.nome
+FROM produtos p
+INNER JOIN vendas v ON p.id_produto = v.id_produto
+WHERE v.data BETWEEN '2024-10-01' AND '2024-10-31';
+
+-- 27) Mostrar todos os nomes
+-- de clientes e funcionários,
+-- indicando a origem,
+-- ordenados alfabeticamente.
+SELECT nome, 'Cliente' AS origem
+FROM clientes
+UNION ALL
+SELECT nome, 'Funcionário' AS origem
+FROM funcionarios
+ORDER BY nome;
+
+-- 28) Mostrar os produtos
+-- cujo preço é maior
+-- que a média da categoria deles.
+SELECT p.nome, p.preco, p.id_categoria
+FROM produtos p
+WHERE p.preco > (
+	 SELECT AVG(p2.preco)
+    FROM produtos p2
+    WHERE p2.id_categoria = p.id_categoria
+)
+;
+
+-- 29) Mostrar os funcionários
+-- responsáveis pelas vendas
+-- dos produtos mais caros da loja.
+SELECT DISTINCT 
+    f.nome AS funcionario
+FROM funcionarios f
+INNER JOIN vendas v ON v.id_funcionario = f.id_funcionario
+INNER JOIN produtos p ON p.id_produto = v.id_produto
+WHERE p.preco = (
+    SELECT MAX(preco)
+    FROM produtos
+);
+ 
+
+ 
+
+-- 30) Mostrar:
+-- cliente,
+-- produto,
+-- categoria,
+-- fornecedor,
+-- funcionário responsável,
+-- data da venda,
+-- valor total da venda.
+
+ 
+
+ 
+
+-- 31) Mostrar os clientes
+-- que nunca compraram
+-- produtos do fornecedor 1.
+
+ 
+
+ 
+
+-- 32) Mostrar os produtos
+-- que possuem estoque abaixo da média geral de estoque.
+
+ 
+
+ 
+
+-- 33) Mostrar os clientes
+-- que possuem renda maior que 5000
+-- OU compraram mais de 5 produtos no total.
+
+ 
+
+ 
+
+-- 34) Mostrar os funcionários
+-- que realizaram vendas
+-- em todos os meses existentes na tabela vendas.
+
+ 
+
+ 
+
+-- 35) Mostrar os produtos
+-- e o total vendido,
+-- incluindo produtos nunca vendidos.
+
+ 
+
+ 
+
+-- 36) Mostrar o cliente
+-- com maior valor total gasto
+-- em uma única venda.
+
+ 
+
+ 
+
+-- 37) Mostrar os funcionários
+-- cujo salário é maior
+-- que todos os salários dos caixas.
+
+ 
+
+ 
+
+-- 38) Mostrar os produtos
+-- com nome contendo a letra 'a',
+-- preço acima da média geral,
+-- e estoque menor que 50.
+
+ 
+
+ 
+
+-- 39) Mostrar os clientes
+-- que compraram produtos
+-- de mais de uma categoria.
+
+ 
+
+ 
+
+-- 40) Mostrar os produtos
+-- vendidos por mais de 3 funcionários diferentes.
+
+ 
+
+ 
+
+-- 41) Mostrar os clientes
+-- que nunca compraram
+-- e possuem renda acima de 4000.
+
+ 
+
+ 
+
+-- 42) Mostrar os fornecedores
+-- que possuem produtos
+-- em todas as categorias cadastradas.
+
+ 
+
+ 
+
+-- 43) Mostrar o valor médio
+-- das vendas por funcionário.
+
+ 
+
+ 
+
+-- 44) Mostrar o mês
+-- com maior faturamento total.
+
+ 
+
+ 
+
+-- 45) Mostrar os produtos
+-- que possuem preço maior
+-- que TODOS os produtos da categoria 'Roupas'.
+
+ 
+
+ 
+
+-- 46) Mostrar os clientes
+-- que fizeram mais compras
+-- que a média de compras dos clientes.
+
+ 
+
+ 
+
+-- 47) Mostrar os funcionários
+-- com o maior salário
+-- dentro de cada estado civil.
+
+ 
+
+ 
+
+-- 48) Mostrar os produtos
+-- ordenados por:
+-- categoria,
+-- preço decrescente,
+-- nome crescente.
+
+ 
+
+ 
+
+-- 49) Mostrar os clientes
+-- cujo nome começa com 'M'
+-- e que compraram produtos acima de R$ 500.
+
+ 
+
+ 
+
+-- 50) Criar uma VIEW chamada vw_faturamento_categoria
+-- contendo:
+-- categoria,
+-- quantidade vendida,
+-- faturamento total.
+
+ 
+
+ 
+
+-- 51) Criar uma VIEW chamada vw_clientes_frequentes
+-- contendo:
+-- cliente,
+-- total de compras,
+-- total gasto.
+
+ 
+
+ 
+
+-- 52) Criar uma VIEW chamada vw_produtos_sem_venda
+-- contendo todos os produtos nunca vendidos.
+
+ 
+
+ 
+
+-- 53) Mostrar os clientes
+-- com idade acima da média de idade dos clientes.
+
+ 
+
+ 
+
+-- 54) Mostrar o produto
+-- mais vendido de cada mês.
+
+ 
+
+ 
+
+-- 55) Mostrar os funcionários
+-- que venderam para clientes
+-- de mais de 3 cidades diferentes.
+
+ 
+
+ 
+
+-- 56) Mostrar os produtos
+-- cujo estoque é menor
+-- que o total vendido deles.
+
+ 
+
+ 
+
+-- 57) Mostrar os clientes
+-- que compraram TODOS os produtos
+-- da categoria 'Alimentos'.
+
+ 
+
+ 
+
+-- 58) Mostrar os fornecedores
+-- que possuem produtos
+-- com preço acima de 2000.
+
+ 
+
+ 
+
+-- 59) Mostrar os funcionários
+-- que nunca atenderam clientes
+-- da cidade de São Paulo.
+
+ 
+
+ 
+
+-- 60) Mostrar:
+-- nome do produto,
+-- preço,
+-- média da categoria,
+-- diferença entre o preço do produto
+-- e a média da categoria.
